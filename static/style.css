@@ -1,0 +1,457 @@
+/* ============================================================
+   GENERAL
+   ============================================================ */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background-color: #f4f6f8;
+
+    color: #222;
+
+}
+
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+
+.topbar {
+
+    background-color: #1f3a5f;
+
+    color: white;
+
+    padding: 18px 24px;
+
+}
+
+
+.topbar h1 {
+
+    margin: 0;
+
+    font-size: 25px;
+
+}
+
+
+.topbar p {
+
+    margin: 5px 0 0;
+
+    font-size: 13px;
+
+    color: #dce6f2;
+
+}
+
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.layout {
+
+    display: flex;
+
+    min-height:
+        calc(100vh - 75px);
+
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar {
+
+    width: 250px;
+
+    background-color: #26466f;
+
+    padding-top: 10px;
+
+    flex-shrink: 0;
+
+}
+
+
+.sidebar ul {
+
+    list-style: none;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
+.menu-item {
+
+    display: block;
+
+    color: #e5ecf5;
+
+    padding: 15px 20px;
+
+    cursor: pointer;
+
+    border-left:
+        4px solid transparent;
+
+    text-decoration: none;
+
+}
+
+
+.menu-item:hover {
+
+    background-color: #33578a;
+
+}
+
+
+.menu-item.active {
+
+    background-color: #3d6aa3;
+
+    border-left:
+        4px solid white;
+
+    font-weight: bold;
+
+}
+
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+
+.content {
+
+    flex: 1;
+
+    padding: 30px 35px;
+
+    overflow-x: auto;
+
+}
+
+
+.content h2 {
+
+    margin-top: 0;
+
+    color: #1f3a5f;
+
+}
+
+
+.content h3 {
+
+    color: #26466f;
+
+}
+
+
+/* ============================================================
+   WELCOME
+   ============================================================ */
+
+.welcome-card {
+
+    background-color: white;
+
+    padding: 30px;
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(0, 0, 0, 0.08);
+
+    max-width: 950px;
+
+}
+
+
+.welcome-card h2 {
+
+    margin-top: 0;
+
+}
+
+
+.welcome-card p {
+
+    line-height: 1.6;
+
+}
+
+
+.welcome-card li {
+
+    margin-bottom: 6px;
+
+}
+
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.card-container {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    margin-top: 20px;
+
+}
+
+
+.card {
+
+    background-color: white;
+
+    padding: 20px;
+
+    border-radius: 7px;
+
+    min-width: 190px;
+
+    box-shadow:
+        0 2px 7px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+.card h3 {
+
+    margin: 0 0 8px;
+
+    font-size: 14px;
+
+    color: #666;
+
+}
+
+
+.card p {
+
+    margin: 0;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: #1f3a5f;
+
+}
+
+
+/* ============================================================
+   SECTION CARD
+   ============================================================ */
+
+.section-card {
+
+    background-color: white;
+
+    padding: 20px;
+
+    margin-top: 20px;
+
+    border-radius: 7px;
+
+    box-shadow:
+        0 2px 7px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+.section-card h3 {
+
+    margin-top: 0;
+
+}
+
+
+/* ============================================================
+   TABLE
+   ============================================================ */
+
+.table-wrapper {
+
+    overflow-x: auto;
+
+    margin-top: 10px;
+
+    max-height: 450px;
+
+    overflow-y: auto;
+
+    border:
+        1px solid #ddd;
+
+}
+
+
+.data-table {
+
+    border-collapse: collapse;
+
+    width: 100%;
+
+    font-size: 13px;
+
+}
+
+
+.data-table th,
+.data-table td {
+
+    border:
+        1px solid #ddd;
+
+    padding: 8px 10px;
+
+    text-align: left;
+
+    white-space: nowrap;
+
+}
+
+
+.data-table th {
+
+    background-color: #eaeff5;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1;
+
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+.error {
+
+    margin-top: 12px;
+
+    color: #b00020;
+
+    background: #fdecea;
+
+    padding: 12px 15px;
+
+    border-radius: 5px;
+
+    border:
+        1px solid #f5c2c7;
+
+}
+
+
+/* ============================================================
+   PLOT
+   ============================================================ */
+
+.plot-card {
+
+    margin-top: 25px;
+
+    padding: 20px;
+
+    background-color: #f8f9fa;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 7px;
+
+    text-align: center;
+
+}
+
+
+.plot-card h4 {
+
+    margin-top: 0;
+
+    color: #26466f;
+
+}
+
+
+.plot-card img {
+
+    max-width: 100%;
+
+    height: auto;
+
+    display: block;
+
+    margin: auto;
+
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .layout {
+
+        flex-direction: column;
+
+    }
+
+
+    .sidebar {
+
+        width: 100%;
+
+    }
+
+
+    .content {
+
+        padding: 20px;
+
+    }
+
+
+    .card-container {
+
+        flex-direction: column;
+
+    }
+
+}

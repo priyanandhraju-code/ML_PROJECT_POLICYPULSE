@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        PolicyPulse
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ========================================================
+     TOP BAR
+     ======================================================== -->
+
+<header class="topbar">
+
+    <h1>
+        PolicyPulse
+    </h1>
+
+    <p>
+        Vehicle Insurance Response Analysis
+    </p>
+
+</header>
+
+
+<!-- ========================================================
+     LAYOUT
+     ======================================================== -->
+
+<div class="layout">
+
+
+    <!-- ====================================================
+         SIDEBAR
+         ==================================================== -->
+
+    <aside class="sidebar">
+
+        <ul>
+
+            <li>
+
+                <a
+                    href="/"
+                    class="menu-item
+                    {% if active == 'none' %}
+                    active
+                    {% endif %}"
+                >
+
+                    🏠 Home
+
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="/data-loading"
+                    class="menu-item
+                    {% if active == 'data-loading' %}
+                    active
+                    {% endif %}"
+                >
+
+                    📂 Data Loading
+
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="/eda"
+                    class="menu-item
+                    {% if active == 'eda' %}
+                    active
+                    {% endif %}"
+                >
+
+                    📊 EDA
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- ====================================================
+         MAIN CONTENT
+         ==================================================== -->
+
+    <main class="content">
+
+
+        <!-- =================================================
+             HOME
+             ================================================= -->
+
+        {% if active == 'none' %}
+
+
+        <div class="welcome-card">
+
+            <h2>
+                Welcome to PolicyPulse
+            </h2>
+
+
+            <p>
+
+                PolicyPulse is a data analysis project
+                that explores customer and vehicle
+                insurance information and studies
+                customer response to an insurance offer.
+
+            </p>
+
+
+            <h3>
+                Dataset Information
+            </h3>
+
+
+            <ul>
+
+                <li>
+                    Customer ID
+                </li>
+
+                <li>
+                    Gender
+                </li>
+
+                <li>
+                    Age
+                </li>
+
+                <li>
+                    Driving License
+                </li>
+
+                <li>
+                    Region Code
+                </li>
+
+                <li>
+                    Previously Insured
+                </li>
+
+                <li>
+                    Vehicle Age
+                </li>
+
+                <li>
+                    Vehicle Damage
+                </li>
+
+                <li>
+                    Annual Premium
+                </li>
+
+                <li>
+                    Policy Sales Channel
+                </li>
+
+                <li>
+                    Vintage
+                </li>
+
+                <li>
+                    Response
+                </li>
+
+            </ul>
+
+
+            <h3>
+                Project Objective
+            </h3>
+
+
+            <p>
+
+                To explore customer and vehicle-related
+                factors and understand their relationship
+                with insurance policy response.
+
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+        <!-- =================================================
+             DATA LOADING
+             ================================================= -->
+
+        {% if active == 'data-loading' %}
+
+
+        <h2>
+            📂 Data Loading
+        </h2>
+
+
+        <p>
+            Dataset:
+            <strong>
+                Policypulse.csv
+            </strong>
+        </p>
+
+
+        {% if error %}
+
+        <div class="error">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        {% if summary %}
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="card-container">
+
+
+            <div class="card">
+
+                <h3>
+                    Total Records
+                </h3>
+
+                <p>
+                    {{ summary.n_rows }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Total Columns
+                </h3>
+
+                <p>
+                    {{ summary.n_cols }}
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- COLUMN INFORMATION -->
+
+        <div class="section-card">
+
+            <h3>
+                Column Information
+            </h3>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Column
+                        </th>
+
+                        <th>
+                            Data Type
+                        </th>
+
+                        <th>
+                            Missing Values
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for col in summary.columns %}
+
+                    <tr>
+
+                        <td>
+                            {{ col }}
+                        </td>
+
+                        <td>
+                            {{ summary.dtypes[col] }}
+                        </td>
+
+                        <td>
+                            {{ summary.missing_counts[col] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- PREVIEW -->
+
+        <div class="section-card">
+
+            <h3>
+                Dataset Preview
+            </h3>
+
+
+            <p>
+                First 10 records
+            </p>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                    <tr>
+
+                    {% for col in summary.columns %}
+
+                        <th>
+                            {{ col }}
+                        </th>
+
+                    {% endfor %}
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for row in summary.preview %}
+
+                    <tr>
+
+                    {% for col in summary.columns %}
+
+                        <td>
+                            {{ row[col] }}
+                        </td>
+
+                    {% endfor %}
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        {% endif %}
+
+
+        {% endif %}
+
+
+        <!-- =================================================
+             EDA
+             ================================================= -->
+
+        {% if active == 'eda' %}
+
+
+        <h2>
+            📊 Exploratory Data Analysis
+        </h2>
+
+
+        <p>
+            PolicyPulse customer and vehicle insurance analysis.
+        </p>
+
+
+        {% if error %}
+
+        <div class="error">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        {% if results %}
+
+
+        <!-- SUMMARY CARDS -->
+
+        <div class="card-container">
+
+
+            <div class="card">
+
+                <h3>
+                    Total Records
+                </h3>
+
+                <p>
+                    {{ results.rows }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Total Columns
+                </h3>
+
+                <p>
+                    {{ results.columns }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Duplicate Rows
+                </h3>
+
+                <p>
+                    {{ results.duplicate_rows }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Response Rate
+                </h3>
+
+                <p>
+                    {{ results.response_rate }}%
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- COLUMN INFORMATION -->
+
+        <div class="section-card">
+
+            <h3>
+                Dataset Columns
+            </h3>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Column Name
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for column in results.column_names %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+                        <td>
+                            {{ column }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- MISSING VALUES -->
+
+        <div class="section-card">
+
+            <h3>
+                Missing Values
+            </h3>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Column
+                        </th>
+
+                        <th>
+                            Missing Values
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    {% for column, count in results.missing_values.items() %}
+
+                    <tr>
+
+                        <td>
+                            {{ column }}
+                        </td>
+
+                        <td>
+                            {{ count }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VISUALIZATIONS
+             ================================================= -->
+
+        <div class="section-card">
+
+            <h3>
+                EDA Visualizations
+            </h3>
+
+
+            {% for plot in results.plots %}
+
+
+            <div class="plot-card">
+
+                <h4>
+                    {{ plot.replace("_", " ").replace(".png", "").title() }}
+                </h4>
+
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/' + plot
+                    ) }}"
+                    alt="{{ plot }}"
+                >
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+        {% endif %}
+
+
+        {% endif %}
+
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

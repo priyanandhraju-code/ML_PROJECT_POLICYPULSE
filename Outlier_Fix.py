@@ -1,181 +1,97 @@
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
 
 # ============================================================
-# LOAD DATASET
+# OUTLIER FIX USING IQR
 # ============================================================
 
-file_path = r"Policypulse.csv"
+def fix_outliers(df, feature="Annual_Premium"):
 
-df = pd.read_csv(file_path)
+    df = df.copy()
 
+    # ========================================================
+    # ORIGINAL STATISTICS
+    # ========================================================
 
-# ============================================================
-# SELECT FEATURE
-# ============================================================
+    print("\n" + "=" * 80)
+    print("OUTLIER DETECTION")
+    print("=" * 80)
 
-feature = "Annual_Premium"
+    print("\nOriginal statistics:")
 
+    print(
+        df[feature].describe()
+    )
 
-# ============================================================
-# ORIGINAL STATISTICS
-# ============================================================
+    # ========================================================
+    # CALCULATE Q1 AND Q3
+    # ========================================================
 
-print("Original statistics:")
+    Q1 = df[feature].quantile(0.25)
 
-print(
-    df[feature].describe()
-)
+    Q3 = df[feature].quantile(0.75)
 
+    # ========================================================
+    # CALCULATE IQR
+    # ========================================================
 
-# ============================================================
-# CALCULATE Q1 AND Q3
-# ============================================================
+    IQR = Q3 - Q1
 
-Q1 = df[feature].quantile(0.25)
+    # ========================================================
+    # CALCULATE FENCES
+    # ========================================================
 
-Q3 = df[feature].quantile(0.75)
+    lower_fence = Q1 - 1.5 * IQR
 
+    upper_fence = Q3 + 1.5 * IQR
 
-# ============================================================
-# CALCULATE IQR
-# ============================================================
+    print("\nQ1 =", Q1)
 
-IQR = Q3 - Q1
+    print("\nQ3 =", Q3)
 
+    print("\nIQR =", IQR)
 
-# ============================================================
-# CALCULATE FENCES
-# ============================================================
+    print("\nLower Fence =", lower_fence)
 
-lower_fence = Q1 - 1.5 * IQR
+    print("\nUpper Fence =", upper_fence)
 
-upper_fence = Q3 + 1.5 * IQR
+    # ========================================================
+    # FIND OUTLIERS
+    # ========================================================
 
+    outliers = df[
+        (df[feature] < lower_fence) |
+        (df[feature] > upper_fence)
+    ]
 
-print("\nQ1 =", Q1)
+    print(
+        "\nNumber of outliers:",
+        len(outliers)
+    )
 
-print("\nQ3 =", Q3)
+    # ========================================================
+    # CLIP OUTLIERS
+    # ========================================================
 
-print("\nIQR =", IQR)
+    df[feature] = df[feature].clip(
+        lower=lower_fence,
+        upper=upper_fence
+    )
 
-print("\nlower_fence =", lower_fence)
+    # ========================================================
+    # DISPLAY RESULTS
+    # ========================================================
 
-print("\nupper_fence =", upper_fence)
+    print("\nMinimum BEFORE clipping:")
 
+    print(
+        df[feature].min()
+    )
 
-# ============================================================
-# FIND OUTLIERS
-# ============================================================
+    print("\nMaximum AFTER clipping:")
 
-outliers = df[
-    (df[feature] < lower_fence) |
-    (df[feature] > upper_fence)
-]
+    print(
+        df[feature].max()
+    )
 
-
-print(
-    "\nNumber of outliers:",
-    len(outliers)
-)
-
-
-# ============================================================
-# CLIP OUTLIERS
-# ============================================================
-
-df["Annual_Premium_Clipped"] = df[feature].clip(
-    lower=lower_fence,
-    upper=upper_fence
-)
-
-
-# ============================================================
-# MINIMUM BEFORE CLIPPING
-# ============================================================
-
-print("\nMinimum BEFORE clipping:")
-
-print(
-    df[feature].min()
-)
-
-
-# ============================================================
-# MINIMUM AFTER CLIPPING
-# ============================================================
-
-print("\nMinimum AFTER clipping:")
-
-print(
-    df["Annual_Premium_Clipped"].min()
-)
-
-
-# ============================================================
-# MAXIMUM BEFORE CLIPPING
-# ============================================================
-
-print("\nMaximum BEFORE clipping:")
-
-print(
-    df[feature].max()
-)
-
-
-# ============================================================
-# MAXIMUM AFTER CLIPPING
-# ============================================================
-
-print("\nMaximum AFTER clipping:")
-
-print(
-    df["Annual_Premium_Clipped"].max()
-)
-
-
-# ============================================================
-# MIN-MAX SCALING
-# ============================================================
-
-scaler = MinMaxScaler()
-
-
-df["Annual_Premium_Scaled"] = scaler.fit_transform(
-    df[["Annual_Premium_Clipped"]]
-)
-
-
-# ============================================================
-# DISPLAY FINAL RESULT
-# ============================================================
-
-print("\n" + "=" * 80)
-
-print("DATA AFTER CLIPPING AND MIN-MAX SCALING")
-
-print("=" * 80)
-
-
-print(
-    df[
-        [
-            "Annual_Premium",
-            "Annual_Premium_Clipped",
-            "Annual_Premium_Scaled"
-        ]
-    ].head(10)
-)
-
-
-print(
-    "\nScaled minimum:",
-    df["Annual_Premium_Scaled"].min()
-)
-
-
-print(
-    "Scaled maximum:",
-    df["Annual_Premium_Scaled"].max()
-)
+    return df

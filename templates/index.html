@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -11,14 +10,12 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        PolicyPulse
-    </title>
+    <title>PolicyPulse</title>
 
-
+    <!-- Cache-busting version -->
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}"
+        href="{{ url_for('static', filename='style.css') }}?v=2"
     >
 
 </head>
@@ -45,7 +42,7 @@
 
 
 <!-- ========================================================
-     LAYOUT
+     MAIN LAYOUT
      ======================================================== -->
 
 <div class="layout">
@@ -58,6 +55,9 @@
     <aside class="sidebar">
 
         <ul>
+
+
+            <!-- HOME -->
 
             <li>
 
@@ -76,6 +76,8 @@
             </li>
 
 
+            <!-- DATA LOADING -->
+
             <li>
 
                 <a
@@ -93,6 +95,8 @@
             </li>
 
 
+            <!-- EDA -->
+
             <li>
 
                 <a
@@ -108,6 +112,62 @@
                 </a>
 
             </li>
+
+
+            <!-- PREPROCESSING -->
+
+            <li>
+
+                <a
+                    href="{{ url_for('preprocessing_page') }}"
+                    class="menu-item"
+                >
+
+                    ⚙️ Preprocessing
+
+                </a>
+
+            </li>
+
+
+            <!-- LINEAR REGRESSION -->
+
+            <li>
+
+                <div class="menu-item disabled">
+
+                    📈 Linear Regression
+
+                </div>
+
+            </li>
+
+
+            <!-- LOGISTIC REGRESSION -->
+
+            <li>
+
+                <div class="menu-item disabled">
+
+                    🔢 Logistic Regression
+
+                </div>
+
+            </li>
+
+
+            <!-- TREE BASED MODELS -->
+
+            <li>
+
+                <div class="menu-item disabled">
+
+                    🌳 Tree Based Models
+
+                </div>
+
+            </li>
+
 
         </ul>
 
@@ -130,78 +190,176 @@
 
         <div class="welcome-card">
 
+
             <h2>
-                Welcome to PolicyPulse
+                🏠 Welcome to PolicyPulse
             </h2>
 
 
             <p>
 
-                PolicyPulse is a data analysis project
-                that explores customer and vehicle
-                insurance information and studies
-                customer response to an insurance offer.
+                PolicyPulse is a machine learning project that
+                analyzes vehicle insurance customer data and
+                predicts whether a customer will respond to an
+                insurance offer.
 
             </p>
 
 
+            <!-- PROJECT OVERVIEW -->
+
             <h3>
-                Dataset Information
+                Project Overview
             </h3>
 
 
             <ul>
 
                 <li>
-                    Customer ID
+                    <strong>Dataset:</strong>
+                    Vehicle Insurance Prediction Dataset
                 </li>
 
                 <li>
-                    Gender
+                    <strong>Total Records:</strong>
+                    381,109
                 </li>
 
                 <li>
-                    Age
+                    <strong>Total Columns:</strong>
+                    12
                 </li>
 
                 <li>
-                    Driving License
-                </li>
-
-                <li>
-                    Region Code
-                </li>
-
-                <li>
-                    Previously Insured
-                </li>
-
-                <li>
-                    Vehicle Age
-                </li>
-
-                <li>
-                    Vehicle Damage
-                </li>
-
-                <li>
-                    Annual Premium
-                </li>
-
-                <li>
-                    Policy Sales Channel
-                </li>
-
-                <li>
-                    Vintage
-                </li>
-
-                <li>
+                    <strong>Target Variable:</strong>
                     Response
+                </li>
+
+                <li>
+                    <strong>Problem Type:</strong>
+                    Binary Classification
                 </li>
 
             </ul>
 
+
+            <!-- DATASET FEATURES -->
+
+            <h3>
+                Dataset Features
+            </h3>
+
+
+            <ul>
+
+                <li>Gender</li>
+
+                <li>Age</li>
+
+                <li>Driving License</li>
+
+                <li>Region Code</li>
+
+                <li>Previously Insured</li>
+
+                <li>Vehicle Age</li>
+
+                <li>Vehicle Damage</li>
+
+                <li>Annual Premium</li>
+
+                <li>Policy Sales Channel</li>
+
+                <li>Vintage</li>
+
+                <li>Response</li>
+
+            </ul>
+
+
+            <!-- MACHINE LEARNING WORKFLOW -->
+
+            <h3>
+                Machine Learning Workflow
+            </h3>
+
+
+            <ol>
+
+                <li>
+
+                    <strong>
+                        Data Loading
+                    </strong>
+
+                    – Load the original PolicyPulse dataset.
+
+                </li>
+
+
+                <li>
+
+                    <strong>
+                        Exploratory Data Analysis
+                    </strong>
+
+                    – Explore distributions, relationships,
+                    correlations and response patterns.
+
+                </li>
+
+
+                <li>
+
+                    <strong>
+                        Data Preprocessing
+                    </strong>
+
+                    – Clean, encode, handle outliers,
+                    split and scale the dataset.
+
+                </li>
+
+
+                <li>
+
+                    <strong>
+                        Linear Regression
+                    </strong>
+
+                    – Apply the required linear regression
+                    approaches.
+
+                </li>
+
+
+                <li>
+
+                    <strong>
+                        Logistic Regression
+                    </strong>
+
+                    – Build classification models with
+                    regularization.
+
+                </li>
+
+
+                <li>
+
+                    <strong>
+                        Tree Based Models
+                    </strong>
+
+                    – Apply tree-based machine learning
+                    algorithms.
+
+                </li>
+
+            </ol>
+
+
+            <!-- PROJECT OBJECTIVE -->
 
             <h3>
                 Project Objective
@@ -210,11 +368,14 @@
 
             <p>
 
-                To explore customer and vehicle-related
-                factors and understand their relationship
-                with insurance policy response.
+                The objective of PolicyPulse is to analyze
+                customer and vehicle-related factors and
+                build machine learning models that can
+                predict customer response to an insurance
+                offer.
 
             </p>
+
 
         </div>
 
@@ -235,10 +396,13 @@
 
 
         <p>
+
             Dataset:
+
             <strong>
                 Policypulse.csv
             </strong>
+
         </p>
 
 
@@ -355,7 +519,7 @@
         </div>
 
 
-        <!-- PREVIEW -->
+        <!-- DATASET PREVIEW -->
 
         <div class="section-card">
 
@@ -377,13 +541,13 @@
 
                     <tr>
 
-                    {% for col in summary.columns %}
+                        {% for col in summary.columns %}
 
                         <th>
                             {{ col }}
                         </th>
 
-                    {% endfor %}
+                        {% endfor %}
 
                     </tr>
 
@@ -396,13 +560,13 @@
 
                     <tr>
 
-                    {% for col in summary.columns %}
+                        {% for col in summary.columns %}
 
                         <td>
                             {{ row[col] }}
                         </td>
 
-                    {% endfor %}
+                        {% endfor %}
 
                     </tr>
 
@@ -514,7 +678,7 @@
         </div>
 
 
-        <!-- COLUMN INFORMATION -->
+        <!-- DATASET COLUMNS -->
 
         <div class="section-card">
 
@@ -629,7 +793,7 @@
 
 
         <!-- =================================================
-             VISUALIZATIONS
+             EDA VISUALIZATIONS
              ================================================= -->
 
         <div class="section-card">
@@ -645,7 +809,14 @@
             <div class="plot-card">
 
                 <h4>
-                    {{ plot.replace("_", " ").replace(".png", "").title() }}
+
+                    {{
+                        plot
+                        .replace("_", " ")
+                        .replace(".png", "")
+                        .title()
+                    }}
+
                 </h4>
 
 
@@ -673,6 +844,7 @@
 
 
     </main>
+
 
 </div>
 

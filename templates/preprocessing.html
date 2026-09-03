@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PolicyPulse - Preprocessing</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="topbar">
+    <h1>PolicyPulse</h1>
+    <p>Vehicle Insurance Response Analysis</p>
+</header>
+
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <ul>
+
+            <li>
+                <a href="{{ url_for('index') }}" class="menu-item">
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('data_loading') }}" class="menu-item">
+                    Data Loading
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('eda_page') }}" class="menu-item">
+                    EDA
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('preprocessing_page') }}"
+                   class="menu-item active">
+                    Preprocessing
+                </a>
+            </li>
+
+            <li>
+                <div class="menu-item disabled">
+                    Linear Regression
+                </div>
+            </li>
+
+            <li>
+                <div class="menu-item disabled">
+                    Logistic Regression
+                </div>
+            </li>
+
+            <li>
+                <div class="menu-item disabled">
+                    Tree Based Models
+                </div>
+            </li>
+
+        </ul>
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <h1>Data Preprocessing</h1>
+
+        <p>
+            Preparing the PolicyPulse dataset for machine learning models.
+        </p>
+
+
+        {% if error %}
+
+        <div class="error">
+            <h3>Preprocessing Error</h3>
+            <p>{{ error }}</p>
+        </div>
+
+        {% elif preprocessing_result is not none %}
+
+        <div class="section-card">
+
+            <h2>Preprocessing Completed</h2>
+
+            <p>
+                The PolicyPulse dataset has been successfully preprocessed.
+            </p>
+
+            <p>
+                <strong>Final Dataset Shape:</strong>
+                {{ preprocessing_result.shape[0] }} rows ×
+                {{ preprocessing_result.shape[1] }} columns
+            </p>
+
+        </div>
+
+
+        <div class="section-card">
+
+            <h2>Preprocessing Steps</h2>
+
+            <ol>
+                <li>Removed the unnecessary <strong>id</strong> column.</li>
+                <li>Handled missing values.</li>
+                <li>Encoded categorical features.</li>
+                <li>Split the dataset into training and testing data.</li>
+                <li>Detected and handled outliers in Annual Premium.</li>
+                <li>Applied Standard Scaling to numerical features.</li>
+                <li>Generated the final preprocessed dataset.</li>
+            </ol>
+
+        </div>
+
+
+        <div class="section-card">
+
+            <h2>Preprocessed Dataset Preview</h2>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            {% for column in preprocessing_result.columns %}
+                            <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for row in preprocessing_result.head(10).itertuples(index=False) %}
+
+                        <tr>
+                            {% for value in row %}
+                            <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+</html>

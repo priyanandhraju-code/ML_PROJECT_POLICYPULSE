@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
@@ -8,19 +9,18 @@ from Standard_Scaler import standard_scale
 
 
 # ============================================================
-# DATASET PATH
+# CONFIGURATION
 # ============================================================
 
-file_path = r"Policypulse.csv"
+FILE_PATH = r"Policypulse.csv"
 
-output_file = r"preprocessed_data.csv"
+OUTPUT_FILE = r"preprocessed_data.csv"
 
+TARGET_COLUMN = "Response"
 
-# ============================================================
-# TARGET VARIABLE
-# ============================================================
+TEST_SIZE = 0.20
 
-target_col = "Response"
+RANDOM_STATE = 42
 
 
 # ============================================================
@@ -29,19 +29,19 @@ target_col = "Response"
 
 def load_dataset():
 
-    if not os.path.exists(file_path):
+    if not os.path.exists(FILE_PATH):
 
         raise FileNotFoundError(
-            f"Dataset not found: {file_path}"
+            f"Dataset not found: {FILE_PATH}"
         )
 
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(FILE_PATH)
 
     return df
 
 
 # ============================================================
-# REMOVE ID COLUMN
+# REMOVE ID
 # ============================================================
 
 def remove_id(df):
@@ -50,9 +50,9 @@ def remove_id(df):
 
     if "id" in df.columns:
 
-        df = df.drop(
-            columns=["id"]
-        )
+        df = df.drop(columns=["id"])
+
+        print("\nRemoved 'id' column.")
 
     return df
 
@@ -65,17 +65,15 @@ def handle_missing_values(df):
 
     df = df.copy()
 
-    # Numerical columns
     numerical_columns = df.select_dtypes(
         include=["int64", "float64"]
     ).columns
 
-    # Categorical columns
     categorical_columns = df.select_dtypes(
         include=["object"]
     ).columns
 
-    # Fill numerical missing values with median
+    # Numerical missing values
     for column in numerical_columns:
 
         if df[column].isnull().sum() > 0:
@@ -84,7 +82,7 @@ def handle_missing_values(df):
                 df[column].median()
             )
 
-    # Fill categorical missing values with mode
+    # Categorical missing values
     for column in categorical_columns:
 
         if df[column].isnull().sum() > 0:
@@ -104,15 +102,32 @@ def encode_categorical_features(df):
 
     df = df.copy()
 
+    # These columns are categorical.
+    #
+    # Region_Code and Policy_Sales_Channel may look
+    # numerical, but they represent categories/codes.
     categorical_columns = [
         "Gender",
         "Vehicle_Age",
-        "Vehicle_Damage"
+        "Vehicle_Damage",
+        "Region_Code",
+        "Policy_Sales_Channel"
     ]
+
+    existing_columns = [
+        column
+        for column in categorical_columns
+        if column in df.columns
+    ]
+
+    print("\nCategorical columns being encoded:")
+
+    for column in existing_columns:
+        print("-", column)
 
     df = pd.get_dummies(
         df,
-        columns=categorical_columns,
+        columns=existing_columns,
         drop_first=True,
         dtype=int
     )
@@ -121,18 +136,21 @@ def encode_categorical_features(df):
 
 
 # ============================================================
-# COMPLETE PREPROCESSING
+# PREPROCESS DATA
 # ============================================================
 
 def preprocess_data():
 
     print("=" * 80)
+
     print("POLICYPULSE PREPROCESSING")
+
     print("=" * 80)
 
-    # ========================================================
-    # 1. LOAD DATA
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 1: LOAD
+    # --------------------------------------------------------
 
     df = load_dataset()
 
@@ -140,9 +158,10 @@ def preprocess_data():
 
     print(df.shape)
 
-    # ========================================================
-    # 2. REMOVE ID
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 2: REMOVE ID
+    # --------------------------------------------------------
 
     df = remove_id(df)
 
@@ -150,21 +169,21 @@ def preprocess_data():
 
     print(df.shape)
 
-    # ========================================================
-    # 3. HANDLE MISSING VALUES
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 3: HANDLE MISSING VALUES
+    # --------------------------------------------------------
 
     df = handle_missing_values(df)
 
     print("\nTotal missing values after handling:")
 
-    print(
-        df.isnull().sum().sum()
-    )
+    print(df.isnull().sum().sum())
 
-    # ========================================================
-    # 4. ENCODE CATEGORICAL FEATURES
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 4: ENCODE CATEGORICAL FEATURES
+    # --------------------------------------------------------
 
     df = encode_categorical_features(df)
 
@@ -172,46 +191,58 @@ def preprocess_data():
 
     print(df.shape)
 
-    # ========================================================
-    # 5. TRAIN-TEST SPLIT
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 5: TRAIN / TEST SPLIT
+    # --------------------------------------------------------
 
     train_df, test_df = train_test_split(
+
         df,
-        test_size=0.2,
-        random_state=42,
-        stratify=df[target_col]
+
+        test_size=TEST_SIZE,
+
+        random_state=RANDOM_STATE,
+
+        stratify=df[TARGET_COLUMN]
+
     )
+
 
     print("\nTraining dataset shape:")
 
     print(train_df.shape)
 
+
     print("\nTesting dataset shape:")
 
     print(test_df.shape)
 
-    # ========================================================
-    # 6. OUTLIER FIX
-    # ========================================================
 
-    train_df = fix_outliers(
+    # --------------------------------------------------------
+    # STEP 6: OUTLIER HANDLING
+    # --------------------------------------------------------
+
+    train_df, test_df = fix_outliers(
         train_df,
+        test_df,
         feature="Annual_Premium"
     )
 
-    # ========================================================
-    # 7. STANDARD SCALING
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 7: STANDARD SCALING
+    # --------------------------------------------------------
 
     train_df, test_df, scaler = standard_scale(
         train_df,
         test_df
     )
 
-    # ========================================================
-    # 8. COMBINE TRAINING AND TESTING DATA
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 8: COMBINE DATA
+    # --------------------------------------------------------
 
     processed_df = pd.concat(
         [train_df, test_df]
@@ -220,40 +251,52 @@ def preprocess_data():
     # Restore original row order
     processed_df = processed_df.sort_index()
 
-    # ========================================================
-    # 9. SAVE PREPROCESSED DATASET
-    # ========================================================
+
+    # --------------------------------------------------------
+    # STEP 9: SAVE
+    # --------------------------------------------------------
 
     processed_df.to_csv(
-        output_file,
+        OUTPUT_FILE,
         index=False
     )
 
-    # ========================================================
-    # 10. DISPLAY FINAL RESULT
-    # ========================================================
+
+    # --------------------------------------------------------
+    # FINAL INFORMATION
+    # --------------------------------------------------------
 
     print("\n" + "=" * 80)
+
     print("PREPROCESSING COMPLETED")
+
     print("=" * 80)
+
 
     print("\nFinal dataset shape:")
 
     print(processed_df.shape)
 
+
     print("\nFinal columns:")
 
     print(processed_df.columns.tolist())
 
-    print("\nFirst 5 rows of preprocessed data:")
 
-    print(
-        processed_df.head()
-    )
+    print("\nTotal missing values:")
+
+    print(processed_df.isnull().sum().sum())
+
+
+    print("\nFirst 5 rows:")
+
+    print(processed_df.head())
+
 
     print("\nPreprocessed dataset saved as:")
 
-    print(output_file)
+    print(OUTPUT_FILE)
+
 
     return processed_df
 

@@ -4,6 +4,9 @@ from load_data import load_data, get_data_summary
 from policypulse_eda import run_eda
 from preprocessing import preprocess_data
 
+from linear_regression import run_linear_regression
+from logistic_regression import run_logistic_regression
+
 
 # ============================================================
 # CREATE FLASK APPLICATION
@@ -101,7 +104,6 @@ def preprocessing_page():
 
     try:
 
-        # Run the complete preprocessing pipeline
         preprocessing_result = preprocess_data()
 
     except FileNotFoundError as e:
@@ -116,6 +118,66 @@ def preprocessing_page():
         "preprocessing.html",
         active="preprocessing",
         preprocessing_result=preprocessing_result,
+        error=error
+    )
+
+
+# ============================================================
+# LINEAR REGRESSION
+# ============================================================
+
+@app.route("/linear-regression")
+def linear_regression_page():
+
+    error = None
+    result = None
+
+    try:
+
+        result = run_linear_regression()
+
+    except FileNotFoundError as e:
+
+        error = str(e)
+
+    except Exception as e:
+
+        error = f"Unexpected error: {e}"
+
+    return render_template(
+        "linear_regression.html",
+        active="linear-regression",
+        linear_regression_result=result,
+        error=error
+    )
+
+
+# ============================================================
+# LOGISTIC REGRESSION
+# ============================================================
+
+@app.route("/logistic-regression")
+def logistic_regression_page():
+
+    error = None
+    result = None
+
+    try:
+
+        result = run_logistic_regression()
+
+    except FileNotFoundError as e:
+
+        error = str(e)
+
+    except Exception as e:
+
+        error = f"Unexpected error: {e}"
+
+    return render_template(
+        "logistic_regression.html",
+        active="logistic-regression",
+        logistic_regression_result=result,
         error=error
     )
 

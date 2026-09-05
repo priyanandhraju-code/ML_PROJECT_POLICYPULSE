@@ -2,34 +2,59 @@ import pandas as pd
 
 
 # ============================================================
-# OUTLIER FIX USING IQR
+# OUTLIER FIX FUNCTION
 # ============================================================
 
-def fix_outliers(df, feature="Annual_Premium"):
+def fix_outliers(
+    train_df,
+    test_df,
+    feature="Annual_Premium"
+):
 
-    df = df.copy()
+    train_df = train_df.copy()
+    test_df = test_df.copy()
+
 
     # ========================================================
-    # ORIGINAL STATISTICS
+    # DISPLAY ORIGINAL STATISTICS
     # ========================================================
 
     print("\n" + "=" * 80)
     print("OUTLIER DETECTION")
     print("=" * 80)
 
-    print("\nOriginal statistics:")
+
+    print("\nFeature:")
+
+    print(feature)
+
+
+    print("\nOriginal TRAINING statistics:")
 
     print(
-        df[feature].describe()
+        train_df[feature].describe()
     )
 
+
+    print("\nOriginal TESTING statistics:")
+
+    print(
+        test_df[feature].describe()
+    )
+
+
     # ========================================================
-    # CALCULATE Q1 AND Q3
+    # CALCULATE QUARTILES
     # ========================================================
 
-    Q1 = df[feature].quantile(0.25)
+    Q1 = train_df[feature].quantile(
+        0.25
+    )
 
-    Q3 = df[feature].quantile(0.75)
+    Q3 = train_df[feature].quantile(
+        0.75
+    )
+
 
     # ========================================================
     # CALCULATE IQR
@@ -37,61 +62,159 @@ def fix_outliers(df, feature="Annual_Premium"):
 
     IQR = Q3 - Q1
 
+
     # ========================================================
     # CALCULATE FENCES
     # ========================================================
 
-    lower_fence = Q1 - 1.5 * IQR
+    lower_fence = Q1 - (
+        1.5 * IQR
+    )
 
-    upper_fence = Q3 + 1.5 * IQR
+    upper_fence = Q3 + (
+        1.5 * IQR
+    )
 
-    print("\nQ1 =", Q1)
 
-    print("\nQ3 =", Q3)
+    print("\n" + "=" * 80)
+    print("IQR OUTLIER CALCULATION")
+    print("=" * 80)
 
-    print("\nIQR =", IQR)
 
-    print("\nLower Fence =", lower_fence)
+    print("\nQ1:")
 
-    print("\nUpper Fence =", upper_fence)
+    print(Q1)
+
+
+    print("\nQ3:")
+
+    print(Q3)
+
+
+    print("\nIQR:")
+
+    print(IQR)
+
+
+    print("\nLower Fence:")
+
+    print(lower_fence)
+
+
+    print("\nUpper Fence:")
+
+    print(upper_fence)
+
 
     # ========================================================
-    # FIND OUTLIERS
+    # FIND TRAINING OUTLIERS
     # ========================================================
 
-    outliers = df[
-        (df[feature] < lower_fence) |
-        (df[feature] > upper_fence)
+    train_outliers = train_df[
+        (train_df[feature] < lower_fence)
+        |
+        (train_df[feature] > upper_fence)
     ]
 
+
+    # ========================================================
+    # FIND TESTING OUTLIERS
+    # ========================================================
+
+    test_outliers = test_df[
+        (test_df[feature] < lower_fence)
+        |
+        (test_df[feature] > upper_fence)
+    ]
+
+
+    print("\n" + "=" * 80)
+    print("OUTLIER COUNTS")
+    print("=" * 80)
+
+
+    print("\nTraining outliers:")
+
     print(
-        "\nNumber of outliers:",
-        len(outliers)
+        len(train_outliers)
     )
 
+
+    print("\nTesting values outside training fences:")
+
+    print(
+        len(test_outliers)
+    )
+
+
     # ========================================================
-    # CLIP OUTLIERS
+    # CLIP TRAINING DATA
     # ========================================================
 
-    df[feature] = df[feature].clip(
+    train_df[feature] = train_df[
+        feature
+    ].clip(
+
         lower=lower_fence,
+
         upper=upper_fence
+
     )
+
 
     # ========================================================
-    # DISPLAY RESULTS
+    # CLIP TESTING DATA
     # ========================================================
 
-    print("\nMinimum BEFORE clipping:")
+    # IMPORTANT:
+    #
+    # The test data is clipped using the fences learned
+    # from the training data.
+    #
+    # We do NOT calculate new Q1/Q3/IQR values for testing.
+    #
+    # This prevents information from the testing dataset
+    # influencing preprocessing.
 
-    print(
-        df[feature].min()
+    test_df[feature] = test_df[
+        feature
+    ].clip(
+
+        lower=lower_fence,
+
+        upper=upper_fence
+
     )
 
-    print("\nMaximum AFTER clipping:")
+
+    # ========================================================
+    # DISPLAY FINAL STATISTICS
+    # ========================================================
+
+    print("\n" + "=" * 80)
+    print("DATA AFTER OUTLIER HANDLING")
+    print("=" * 80)
+
+
+    print("\nTraining statistics after outlier handling:")
 
     print(
-        df[feature].max()
+        train_df[feature].describe()
     )
 
-    return df
+
+    print("\nTesting statistics after outlier handling:")
+
+    print(
+        test_df[feature].describe()
+    )
+
+
+    # ========================================================
+    # RETURN
+    # ========================================================
+
+    return (
+        train_df,
+        test_df
+    )

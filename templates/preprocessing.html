@@ -1,80 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>PolicyPulse - Preprocessing</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}?v=7"
+    >
+
 </head>
+
 
 <body>
 
+
+<!-- ============================================================
+     TOP BAR
+     ============================================================ -->
+
 <header class="topbar">
-    <h1>PolicyPulse</h1>
-    <p>Vehicle Insurance Response Analysis</p>
+
+    <h1>
+        PolicyPulse
+    </h1>
+
+    <p>
+        Vehicle Insurance Response Analysis
+    </p>
+
 </header>
 
 
+<!-- ============================================================
+     MAIN LAYOUT
+     ============================================================ -->
+
 <div class="layout">
 
-    <!-- SIDEBAR -->
+
+    <!-- ========================================================
+         SIDEBAR
+         ======================================================== -->
+
     <aside class="sidebar">
+
         <ul>
 
-            <li>
-                <a href="{{ url_for('index') }}" class="menu-item">
-                    Home
-                </a>
-            </li>
+
+            <!-- HOME -->
 
             <li>
-                <a href="{{ url_for('data_loading') }}" class="menu-item">
-                    Data Loading
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="menu-item
+                    {% if active == 'none' %}
+                    active
+                    {% endif %}"
+                >
+
+                    🏠 Home
+
                 </a>
+
             </li>
 
-            <li>
-                <a href="{{ url_for('eda_page') }}" class="menu-item">
-                    EDA
-                </a>
-            </li>
+
+            <!-- DATA LOADING -->
 
             <li>
-                <a href="{{ url_for('preprocessing_page') }}"
-                   class="menu-item active">
-                    Preprocessing
+
+                <a
+                    href="{{ url_for('data_loading') }}"
+                    class="menu-item
+                    {% if active == 'data-loading' %}
+                    active
+                    {% endif %}"
+                >
+
+                    📂 Data Loading
+
                 </a>
+
             </li>
 
+
+            <!-- EDA -->
+
             <li>
+
+                <a
+                    href="{{ url_for('eda_page') }}"
+                    class="menu-item
+                    {% if active == 'eda' %}
+                    active
+                    {% endif %}"
+                >
+
+                    📊 EDA
+
+                </a>
+
+            </li>
+
+
+            <!-- PREPROCESSING -->
+
+            <li>
+
+                <a
+                    href="{{ url_for('preprocessing_page') }}"
+                    class="menu-item
+                    {% if active == 'preprocessing' %}
+                    active
+                    {% endif %}"
+                >
+
+                    ⚙️ Preprocessing
+
+                </a>
+
+            </li>
+
+
+            <!-- LINEAR REGRESSION -->
+
+            <li>
+
+                <a
+                    href="{{ url_for('linear_regression_page') }}"
+                    class="menu-item
+                    {% if active == 'linear-regression' %}
+                    active
+                    {% endif %}"
+                >
+
+                    📈 Linear Regression
+
+                </a>
+
+            </li>
+
+
+            <!-- LOGISTIC REGRESSION -->
+
+            <li>
+
+                <a
+                    href="{{ url_for('logistic_regression_page') }}"
+                    class="menu-item
+                    {% if active == 'logistic-regression' %}
+                    active
+                    {% endif %}"
+                >
+
+                    🔢 Logistic Regression
+
+                </a>
+
+            </li>
+
+
+            <!-- TREE BASED MODELS -->
+
+            <li>
+
                 <div class="menu-item disabled">
-                    Linear Regression
+
+                    🌳 Tree Based Models
+
                 </div>
+
             </li>
 
-            <li>
-                <div class="menu-item disabled">
-                    Logistic Regression
-                </div>
-            </li>
-
-            <li>
-                <div class="menu-item disabled">
-                    Tree Based Models
-                </div>
-            </li>
 
         </ul>
+
     </aside>
 
 
-    <!-- CONTENT -->
+    <!-- ========================================================
+         MAIN CONTENT
+         ======================================================== -->
+
     <main class="content">
 
-        <h1>Data Preprocessing</h1>
+
+        <!-- PAGE HEADER -->
+
+        <h2>
+            ⚙️ Data Preprocessing
+        </h2>
 
         <p>
             Preparing the PolicyPulse dataset for machine learning models.
@@ -84,87 +209,508 @@
         {% if error %}
 
         <div class="error">
-            <h3>Preprocessing Error</h3>
-            <p>{{ error }}</p>
-        </div>
 
-        {% elif preprocessing_result is not none %}
-
-        <div class="section-card">
-
-            <h2>Preprocessing Completed</h2>
-
-            <p>
-                The PolicyPulse dataset has been successfully preprocessed.
-            </p>
-
-            <p>
-                <strong>Final Dataset Shape:</strong>
-                {{ preprocessing_result.shape[0] }} rows ×
-                {{ preprocessing_result.shape[1] }} columns
-            </p>
-
-        </div>
-
-
-        <div class="section-card">
-
-            <h2>Preprocessing Steps</h2>
-
-            <ol>
-                <li>Removed the unnecessary <strong>id</strong> column.</li>
-                <li>Handled missing values.</li>
-                <li>Encoded categorical features.</li>
-                <li>Split the dataset into training and testing data.</li>
-                <li>Detected and handled outliers in Annual Premium.</li>
-                <li>Applied Standard Scaling to numerical features.</li>
-                <li>Generated the final preprocessed dataset.</li>
-            </ol>
-
-        </div>
-
-
-        <div class="section-card">
-
-            <h2>Preprocessed Dataset Preview</h2>
-
-            <div class="table-wrapper">
-
-                <table class="data-table">
-
-                    <thead>
-                        <tr>
-                            {% for column in preprocessing_result.columns %}
-                            <th>{{ column }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        {% for row in preprocessing_result.head(10).itertuples(index=False) %}
-
-                        <tr>
-                            {% for value in row %}
-                            <td>{{ value }}</td>
-                            {% endfor %}
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
+            {{ error }}
 
         </div>
 
         {% endif %}
 
+
+        {% if preprocessing_result is not none %}
+
+
+        <!-- =====================================================
+             PREPROCESSING COMPLETED
+             ===================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                Preprocessing Completed
+            </h2>
+
+            <p>
+                The PolicyPulse dataset has been successfully
+                preprocessed and is ready for the regression
+                and classification models.
+            </p>
+
+
+            <!-- =================================================
+                 SUMMARY CARDS
+                 ================================================= -->
+
+            <div class="card-container">
+
+
+                <div class="card">
+
+                    <h3>
+                        Original Dataset
+                    </h3>
+
+                    <p>
+                        381,109
+                    </p>
+
+                    <span>
+                        Rows
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Final Dataset
+                    </h3>
+
+                    <p>
+                        {{ preprocessing_result.shape[0] }}
+                    </p>
+
+                    <span>
+                        Rows
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Features
+                    </h3>
+
+                    <p>
+                        {{ preprocessing_result.shape[1] - 1 }}
+                    </p>
+
+                    <span>
+                        Predictor Features
+                    </span>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Target
+                    </h3>
+
+                    <p>
+                        Response
+                    </p>
+
+                    <span>
+                        Binary Classification
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 PREPROCESSING STEPS
+                 ================================================= -->
+
+            <h2>
+                Preprocessing Steps
+            </h2>
+
+
+            <div class="card-container">
+
+
+                <!-- STEP 1 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        1. Remove ID
+                    </h3>
+
+                    <p>
+                        The ID column was removed because it does
+                        not provide useful predictive information.
+                    </p>
+
+                </div>
+
+
+                <!-- STEP 2 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        2. Missing Value Handling
+                    </h3>
+
+                    <p>
+                        Missing numerical values are handled using
+                        the median and categorical values using
+                        the mode.
+                    </p>
+
+                </div>
+
+
+                <!-- STEP 3 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        3. Categorical Encoding
+                    </h3>
+
+                    <p>
+                        Categorical variables are converted into
+                        numerical features using one-hot encoding.
+                    </p>
+
+                </div>
+
+
+                <!-- STEP 4 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        4. Outlier Treatment
+                    </h3>
+
+                    <p>
+                        Extreme Annual Premium values are handled
+                        using the IQR-based clipping method.
+                    </p>
+
+                </div>
+
+
+                <!-- STEP 5 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        5. Train-Test Split
+                    </h3>
+
+                    <p>
+                        The dataset is divided into training and
+                        testing datasets using an 80:20 split.
+                    </p>
+
+                </div>
+
+
+                <!-- STEP 6 -->
+
+                <div class="section-card">
+
+                    <h3>
+                        6. Standard Scaling
+                    </h3>
+
+                    <p>
+                        Age, Annual Premium and Vintage are
+                        standardized using StandardScaler.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 FEATURE TRANSFORMATION
+                 ================================================= -->
+
+            <h2>
+                Feature Transformation
+            </h2>
+
+
+            <div class="section-card">
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                Feature Type
+                            </th>
+
+                            <th>
+                                Features
+                            </th>
+
+                            <th>
+                                Transformation
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        <tr>
+
+                            <td>
+                                Identifier
+                            </td>
+
+                            <td>
+                                id
+                            </td>
+
+                            <td>
+                                Removed
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Categorical
+                            </td>
+
+                            <td>
+                                Gender, Vehicle_Age,
+                                Vehicle_Damage
+                            </td>
+
+                            <td>
+                                One-Hot Encoding
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Categorical Codes
+                            </td>
+
+                            <td>
+                                Region_Code,
+                                Policy_Sales_Channel
+                            </td>
+
+                            <td>
+                                One-Hot Encoding
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Numerical
+                            </td>
+
+                            <td>
+                                Age, Annual_Premium,
+                                Vintage
+                            </td>
+
+                            <td>
+                                Standard Scaling
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Binary
+                            </td>
+
+                            <td>
+                                Driving_License,
+                                Previously_Insured
+                            </td>
+
+                            <td>
+                                Kept as 0 / 1
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Target
+                            </td>
+
+                            <td>
+                                Response
+                            </td>
+
+                            <td>
+                                Binary 0 / 1
+                            </td>
+
+                        </tr>
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FINAL DATASET
+                 ================================================= -->
+
+            <h2>
+                Final Dataset Information
+            </h2>
+
+
+            <div class="card-container">
+
+
+                <div class="card">
+
+                    <h3>
+                        Rows
+                    </h3>
+
+                    <p>
+                        {{ preprocessing_result.shape[0] }}
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Columns
+                    </h3>
+
+                    <p>
+                        {{ preprocessing_result.shape[1] }}
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Predictor Features
+                    </h3>
+
+                    <p>
+                        {{ preprocessing_result.shape[1] - 1 }}
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Missing Values
+                    </h3>
+
+                    <p>
+                        0
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 NEXT STAGE
+                 ================================================= -->
+
+            <h2>
+                Next Modeling Stage
+            </h2>
+
+
+            <div class="card-container">
+
+
+                <a
+                    href="{{ url_for('linear_regression_page') }}"
+                    class="section-card"
+                    style="text-decoration: none;"
+                >
+
+                    <h3>
+                        📈 Linear Regression
+                    </h3>
+
+                    <p>
+                        Continue to Linear Regression with
+                        regularized and non-regularized models.
+                    </p>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('logistic_regression_page') }}"
+                    class="section-card"
+                    style="text-decoration: none;"
+                >
+
+                    <h3>
+                        🔢 Logistic Regression
+                    </h3>
+
+                    <p>
+                        Continue to Logistic Regression with
+                        Ridge and Lasso regularization.
+                    </p>
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% endif %}
+
+
     </main>
+
 
 </div>
 
+
 </body>
+
 </html>

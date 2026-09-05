@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>PolicyPulse - Logistic Regression</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}?v=7"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="topbar">
+
+    <h1>PolicyPulse</h1>
+
+    <p>Vehicle Insurance Response Analysis</p>
+
+</div>
+
+
+<div class="layout">
+
+
+    <!-- ========================================================
+         SIDEBAR
+         ======================================================== -->
+
+    <aside class="sidebar">
+
+        <ul>
+
+            <li>
+                <a href="/" class="menu-item">
+                    🏠 Home
+                </a>
+            </li>
+
+            <li>
+                <a href="/data-loading" class="menu-item">
+                    📂 Data Loading
+                </a>
+            </li>
+
+            <li>
+                <a href="/eda" class="menu-item">
+                    📊 EDA
+                </a>
+            </li>
+
+            <li>
+                <a href="/preprocessing" class="menu-item">
+                    ⚙️ Preprocessing
+                </a>
+            </li>
+
+            <li>
+                <a href="/linear-regression"
+                   class="menu-item">
+                    📈 Linear Regression
+                </a>
+            </li>
+
+            <li>
+                <a href="/logistic-regression"
+                   class="menu-item active">
+                    🔢 Logistic Regression
+                </a>
+            </li>
+
+            <li>
+                <span class="menu-item disabled">
+                    🌳 Tree Based Models
+                </span>
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- ========================================================
+         MAIN CONTENT
+         ======================================================== -->
+
+    <main class="content">
+
+
+        <h1>Logistic Regression</h1>
+
+        <p>
+            V4 — Logistic Regression for predicting the
+            PolicyPulse Response variable.
+        </p>
+
+
+        {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        {% if logistic_regression_result is not none %}
+
+
+        <!-- ====================================================
+             DATASET INFORMATION
+             ==================================================== -->
+
+        <div class="card-container">
+
+            <div class="card">
+
+                <h3>Dataset Rows</h3>
+
+                <p>
+                    {{ logistic_regression_result.dataset_shape[0] }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Features</h3>
+
+                <p>
+                    {{ logistic_regression_result.training_shape[1] }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Training Records</h3>
+
+                <p>
+                    {{ logistic_regression_result.training_shape[0] }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Testing Records</h3>
+
+                <p>
+                    {{ logistic_regression_result.testing_shape[0] }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             WITHOUT REGULARIZATION
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>Without Regularization</h2>
+
+            <p>
+                Logistic Regression without an L1 or L2
+                regularization penalty.
+            </p>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1 Score</th>
+                            <th>ROC AUC</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in
+                           logistic_regression_result.comparison %}
+
+                            {% if row["Category"] ==
+                                  "Without Regularization" %}
+
+                            <tr>
+
+                                <td>
+                                    {{ row["Model"] }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Accuracy"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Precision"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Recall"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["F1 Score"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["ROC AUC"]) }}
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             WITH REGULARIZATION
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>With Regularization</h2>
+
+            <p>
+                Regularized Logistic Regression using L2 and
+                L1 penalties.
+            </p>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Model</th>
+                            <th>Regularization</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1 Score</th>
+                            <th>ROC AUC</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in
+                           logistic_regression_result.comparison %}
+
+                            {% if row["Category"] ==
+                                  "With Regularization" %}
+
+                            <tr>
+
+                                <td>
+                                    {{ row["Model"] }}
+                                </td>
+
+                                <td>
+
+                                    {% if "Ridge" in row["Model"] %}
+
+                                        L2
+
+                                    {% else %}
+
+                                        L1
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Accuracy"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Precision"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["Recall"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["F1 Score"]) }}
+                                </td>
+
+                                <td>
+                                    {{ "%.6f"|format(row["ROC AUC"]) }}
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             COMPLETE COMPARISON
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>Complete Model Comparison</h2>
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Category</th>
+                            <th>Model</th>
+                            <th>Accuracy</th>
+                            <th>Precision</th>
+                            <th>Recall</th>
+                            <th>F1 Score</th>
+                            <th>ROC AUC</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in
+                           logistic_regression_result.comparison %}
+
+                        <tr>
+
+                            <td>
+                                {{ row["Category"] }}
+                            </td>
+
+                            <td>
+                                {{ row["Model"] }}
+                            </td>
+
+                            <td>
+                                {{ "%.6f"|format(row["Accuracy"]) }}
+                            </td>
+
+                            <td>
+                                {{ "%.6f"|format(row["Precision"]) }}
+                            </td>
+
+                            <td>
+                                {{ "%.6f"|format(row["Recall"]) }}
+                            </td>
+
+                            <td>
+                                {{ "%.6f"|format(row["F1 Score"]) }}
+                            </td>
+
+                            <td>
+                                {{ "%.6f"|format(row["ROC AUC"]) }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             MODEL COMPARISON GRAPH
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>Model Performance Comparison</h2>
+
+            <div class="plot-card">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/logistic_regression_comparison.png'
+                    ) }}?v=4"
+                    alt="Logistic Regression Comparison"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             CONFUSION MATRICES
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>Confusion Matrices</h2>
+
+
+            <div class="plot-card">
+
+                <h4>Logistic Regression</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/logistic_regression_confusion_matrix.png'
+                    ) }}?v=4"
+                    alt="Logistic Regression Confusion Matrix"
+                >
+
+            </div>
+
+
+            <div class="plot-card">
+
+                <h4>Ridge Logistic Regression — L2</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/ridge_logistic_confusion_matrix.png'
+                    ) }}?v=4"
+                    alt="Ridge Logistic Regression Confusion Matrix"
+                >
+
+            </div>
+
+
+            <div class="plot-card">
+
+                <h4>Lasso Logistic Regression — L1</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/lasso_logistic_confusion_matrix.png'
+                    ) }}?v=4"
+                    alt="Lasso Logistic Regression Confusion Matrix"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             ROC CURVES
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>ROC Curves</h2>
+
+
+            <div class="plot-card">
+
+                <h4>Logistic Regression</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/logistic_regression_roc_curve.png'
+                    ) }}?v=4"
+                    alt="Logistic Regression ROC Curve"
+                >
+
+            </div>
+
+
+            <div class="plot-card">
+
+                <h4>Ridge Logistic Regression — L2</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/ridge_logistic_roc_curve.png'
+                    ) }}?v=4"
+                    alt="Ridge Logistic Regression ROC Curve"
+                >
+
+            </div>
+
+
+            <div class="plot-card">
+
+                <h4>Lasso Logistic Regression — L1</h4>
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/lasso_logistic_roc_curve.png'
+                    ) }}?v=4"
+                    alt="Lasso Logistic Regression ROC Curve"
+                >
+
+            </div>
+
+        </div>
+
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

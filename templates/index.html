@@ -189,13 +189,19 @@
 
             <li>
 
-                <div class="menu-item disabled">
+    <a
+        href="{{ url_for('tree_based_page') }}"
+        class="menu-item
+        {% if active == 'tree-based' %}
+            active
+        {% endif %}"
+    >
 
-                    🌳 Tree Based Models
+        🌳 Tree Based Models
 
-                </div>
+    </a>
 
-            </li>
+</li>
 
 
         </ul>

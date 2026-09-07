@@ -12,8 +12,239 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=7"
+        href="{{ url_for('static', filename='style.css') }}?v=10"
     >
+
+    <style>
+
+        /* =====================================================
+           LINEAR REGRESSION PAGE
+           ===================================================== */
+
+        .regression-page {
+            width: 100%;
+            min-width: 0;
+        }
+
+
+        /* =====================================================
+           APPROACH SELECTOR
+           ===================================================== */
+
+        .approach-card {
+            width: 100%;
+            background: #ffffff;
+            border: 1px solid #dfe6ef;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(30, 55, 80, 0.05);
+        }
+
+        .approach-card h2 {
+            color: #244b75;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .approach-card p {
+            color: #5c6d82;
+            margin-bottom: 18px;
+        }
+
+        .approach-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .approach-control label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #294866;
+        }
+
+        .approach-select {
+            width: 360px;
+            height: 48px;
+            padding: 0 15px;
+            border: 1px solid #aebfd2;
+            border-radius: 7px;
+            background: white;
+            color: #253b57;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .approach-select:focus {
+            border-color: #244b75;
+            box-shadow: 0 0 0 2px rgba(36, 75, 117, 0.15);
+        }
+
+
+        /* =====================================================
+           HIDDEN / VISIBLE SECTIONS
+           ===================================================== */
+
+        .selection-section {
+            display: none;
+        }
+
+        .selection-section.show {
+            display: block;
+        }
+
+
+        /* =====================================================
+           SUMMARY CARDS
+           ===================================================== */
+
+        .regression-summary {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+
+        /* =====================================================
+           SECTION CARD
+           ===================================================== */
+
+        .regression-page .section-card {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            margin-top: 24px;
+            display: block;
+            float: none;
+            clear: both;
+        }
+
+
+        /* =====================================================
+           TABLE
+           ===================================================== */
+
+        .regression-page .table-wrapper {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .regression-page .data-table {
+            width: 100%;
+            min-width: 650px;
+        }
+
+
+        /* =====================================================
+           PLOTS
+           ===================================================== */
+
+        .regression-plot {
+            width: 100%;
+            padding: 20px;
+            margin-top: 20px;
+            background: #f8fafc;
+            border: 1px solid #dfe6ef;
+            border-radius: 10px;
+            text-align: center;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .regression-plot img {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           PREDICTION PLOT GRID
+           ===================================================== */
+
+        .prediction-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .prediction-card {
+            background: #f8fafc;
+            border: 1px solid #dfe6ef;
+            border-radius: 10px;
+            padding: 18px;
+            text-align: center;
+            min-width: 0;
+        }
+
+        .prediction-card h4 {
+            color: #294866;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .prediction-card img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 1100px) {
+
+            .regression-summary {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .prediction-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .regression-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .approach-control {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .approach-select {
+                width: 100%;
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .regression-summary {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -84,9 +315,10 @@
             </li>
 
             <li>
-                <span class="menu-item disabled">
+                <a href="{{ url_for('tree_based_page') }}"
+                   class="menu-item">
                     🌳 Tree Based Models
-                </span>
+                </a>
             </li>
 
         </ul>
@@ -98,9 +330,12 @@
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content">
+    <main class="content regression-page">
 
-        <h1>Linear Regression</h1>
+
+        <h1>
+            Linear Regression
+        </h1>
 
         <p>
             V4 — Linear Regression with and without
@@ -124,7 +359,7 @@
              DATASET INFORMATION
              ==================================================== -->
 
-        <div class="card-container">
+        <div class="regression-summary">
 
             <div class="card">
 
@@ -173,77 +408,159 @@
 
 
         <!-- ====================================================
-             WITHOUT REGULARIZATION
+             APPROACH DROPDOWN
              ==================================================== -->
 
-        <div class="section-card">
+        <div class="approach-card">
 
-            <h2>Without Regularization</h2>
+            <h2>
+                Select Regression Approach
+            </h2>
 
             <p>
-                Ordinary Linear Regression without L1 or L2
-                regularization.
+                Choose whether to view the model without
+                regularization, with regularization, or compare
+                all models.
             </p>
 
 
-            <div class="table-wrapper">
+            <div class="approach-control">
 
-                <table class="data-table">
+                <label for="linearApproach">
+                    Approach:
+                </label>
 
-                    <thead>
+                <select
+                    id="linearApproach"
+                    class="approach-select"
+                    onchange="changeLinearApproach()"
+                >
 
-                        <tr>
+                    <option value="without">
+                        Without Regularization
+                    </option>
 
-                            <th>Model</th>
-                            <th>MAE</th>
-                            <th>MSE</th>
-                            <th>RMSE</th>
-                            <th>R² Score</th>
+                    <option value="with">
+                        With Regularization
+                    </option>
 
-                        </tr>
+                    <option value="all">
+                        Compare All
+                    </option>
 
-                    </thead>
+                </select>
+
+            </div>
+
+        </div>
 
 
-                    <tbody>
+        <!-- ====================================================
+             WITHOUT REGULARIZATION
+             ==================================================== -->
 
-                        {% for row in
-                           linear_regression_result.comparison %}
+        <div
+            id="linearWithout"
+            class="selection-section show"
+        >
 
-                            {% if row["Category"] ==
-                                  "Without Regularization" %}
+            <div class="section-card">
+
+                <h2>
+                    Without Regularization
+                </h2>
+
+                <p>
+                    Ordinary Linear Regression without L1 or L2
+                    regularization.
+                </p>
+
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
 
                             <tr>
 
-                                <td>
-                                    {{ row["Model"] }}
-                                </td>
-
-                                <td>
-                                    {{ "%.6f"|format(row["MAE"]) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.6f"|format(row["MSE"]) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.6f"|format(row["RMSE"]) }}
-                                </td>
-
-                                <td>
-                                    {{ "%.6f"|format(row["R2 Score"]) }}
-                                </td>
+                                <th>Model</th>
+                                <th>MAE</th>
+                                <th>MSE</th>
+                                <th>RMSE</th>
+                                <th>R² Score</th>
 
                             </tr>
 
-                            {% endif %}
+                        </thead>
 
-                        {% endfor %}
 
-                    </tbody>
+                        <tbody>
 
-                </table>
+                            {% for row in
+                               linear_regression_result.comparison %}
+
+                                {% if row["Category"] ==
+                                      "Without Regularization" %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ row["Model"] }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["MAE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["MSE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["RMSE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["R2 Score"]) }}
+                                    </td>
+
+                                </tr>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-card">
+
+                <h2>
+                    Actual vs Predicted
+                </h2>
+
+                <div class="regression-plot">
+
+                    <h4>
+                        Linear Regression
+                    </h4>
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='plots/linear_regression_predictions.png'
+                        ) }}?v=10"
+                        alt="Linear Regression Predictions"
+                    >
+
+                </div>
 
             </div>
 
@@ -254,62 +571,197 @@
              WITH REGULARIZATION
              ==================================================== -->
 
-        <div class="section-card">
+        <div
+            id="linearWith"
+            class="selection-section"
+        >
 
-            <h2>With Regularization</h2>
+            <div class="section-card">
 
-            <p>
-                Regularized Linear Regression using L2 and L1
-                penalties.
-            </p>
+                <h2>
+                    With Regularization
+                </h2>
 
-
-            <div class="table-wrapper">
-
-                <table class="data-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Model</th>
-                            <th>Regularization</th>
-                            <th>MAE</th>
-                            <th>MSE</th>
-                            <th>RMSE</th>
-                            <th>R² Score</th>
-
-                        </tr>
-
-                    </thead>
+                <p>
+                    Regularized Linear Regression using L2 and L1
+                    penalties.
+                </p>
 
 
-                    <tbody>
+                <div class="table-wrapper">
 
-                        {% for row in
-                           linear_regression_result.comparison %}
+                    <table class="data-table">
 
-                            {% if row["Category"] ==
-                                  "With Regularization" %}
+                        <thead>
+
+                            <tr>
+
+                                <th>Model</th>
+                                <th>Regularization</th>
+                                <th>MAE</th>
+                                <th>MSE</th>
+                                <th>RMSE</th>
+                                <th>R² Score</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in
+                               linear_regression_result.comparison %}
+
+                                {% if row["Category"] ==
+                                      "With Regularization" %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ row["Model"] }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if "Ridge" in row["Model"] %}
+                                            L2
+                                        {% else %}
+                                            L1
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["MAE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["MSE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["RMSE"]) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.6f"|format(row["R2 Score"]) }}
+                                    </td>
+
+                                </tr>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="section-card">
+
+                <h2>
+                    Regularized Predictions
+                </h2>
+
+
+                <div class="prediction-grid">
+
+
+                    <div class="prediction-card">
+
+                        <h4>
+                            Ridge Regression — L2
+                        </h4>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='plots/ridge_regression_predictions.png'
+                            ) }}?v=10"
+                            alt="Ridge Regression Predictions"
+                        >
+
+                    </div>
+
+
+                    <div class="prediction-card">
+
+                        <h4>
+                            Lasso Regression — L1
+                        </h4>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='plots/lasso_regression_predictions.png'
+                            ) }}?v=10"
+                            alt="Lasso Regression Predictions"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             COMPARE ALL
+             ==================================================== -->
+
+        <div
+            id="linearAll"
+            class="selection-section"
+        >
+
+            <div class="section-card">
+
+                <h2>
+                    Complete Model Comparison
+                </h2>
+
+
+                <div class="table-wrapper">
+
+                    <table class="data-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Category</th>
+                                <th>Model</th>
+                                <th>MAE</th>
+                                <th>MSE</th>
+                                <th>RMSE</th>
+                                <th>R² Score</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in
+                               linear_regression_result.comparison %}
 
                             <tr>
 
                                 <td>
-                                    {{ row["Model"] }}
+                                    {{ row["Category"] }}
                                 </td>
 
                                 <td>
-
-                                    {% if "Ridge" in row["Model"] %}
-
-                                        L2
-
-                                    {% else %}
-
-                                        L1
-
-                                    {% endif %}
-
+                                    {{ row["Model"] }}
                                 </td>
 
                                 <td>
@@ -330,164 +782,99 @@
 
                             </tr>
 
-                            {% endif %}
+                            {% endfor %}
 
-                        {% endfor %}
+                        </tbody>
 
-                    </tbody>
+                    </table>
 
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- ====================================================
-             COMPARISON
-             ==================================================== -->
-
-        <div class="section-card">
-
-            <h2>Complete Model Comparison</h2>
-
-            <div class="table-wrapper">
-
-                <table class="data-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Category</th>
-                            <th>Model</th>
-                            <th>MAE</th>
-                            <th>MSE</th>
-                            <th>RMSE</th>
-                            <th>R² Score</th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        {% for row in
-                           linear_regression_result.comparison %}
-
-                        <tr>
-
-                            <td>
-                                {{ row["Category"] }}
-                            </td>
-
-                            <td>
-                                {{ row["Model"] }}
-                            </td>
-
-                            <td>
-                                {{ "%.6f"|format(row["MAE"]) }}
-                            </td>
-
-                            <td>
-                                {{ "%.6f"|format(row["MSE"]) }}
-                            </td>
-
-                            <td>
-                                {{ "%.6f"|format(row["RMSE"]) }}
-                            </td>
-
-                            <td>
-                                {{ "%.6f"|format(row["R2 Score"]) }}
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-
-        <!-- ====================================================
-             COMPARISON PLOT
-             ==================================================== -->
-
-        <div class="section-card">
-
-            <h2>Model Comparison</h2>
-
-            <div class="plot-card">
-
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/linear_regression_comparison.png'
-                    ) }}?v=4"
-                    alt="Linear Regression Comparison"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- ====================================================
-             PREDICTION PLOTS
-             ==================================================== -->
-
-        <div class="section-card">
-
-            <h2>Actual vs Predicted</h2>
-
-
-            <div class="plot-card">
-
-                <h4>Linear Regression</h4>
-
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/linear_regression_predictions.png'
-                    ) }}?v=4"
-                    alt="Linear Regression Predictions"
-                >
+                </div>
 
             </div>
 
 
-            <div class="plot-card">
+            <div class="section-card">
 
-                <h4>Ridge Regression — L2</h4>
+                <h2>
+                    Model Comparison
+                </h2>
 
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/ridge_regression_predictions.png'
-                    ) }}?v=4"
-                    alt="Ridge Regression Predictions"
-                >
+                <div class="regression-plot">
+
+                    <img
+                        src="{{ url_for(
+                            'static',
+                            filename='plots/linear_regression_comparison.png'
+                        ) }}?v=10"
+                        alt="Linear Regression Comparison"
+                    >
+
+                </div>
 
             </div>
 
 
-            <div class="plot-card">
+            <div class="section-card">
 
-                <h4>Lasso Regression — L1</h4>
+                <h2>
+                    Actual vs Predicted
+                </h2>
 
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/lasso_regression_predictions.png'
-                    ) }}?v=4"
-                    alt="Lasso Regression Predictions"
-                >
+
+                <div class="prediction-grid">
+
+
+                    <div class="prediction-card">
+
+                        <h4>
+                            Linear Regression
+                        </h4>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='plots/linear_regression_predictions.png'
+                            ) }}?v=10"
+                            alt="Linear Regression Predictions"
+                        >
+
+                    </div>
+
+
+                    <div class="prediction-card">
+
+                        <h4>
+                            Ridge Regression — L2
+                        </h4>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='plots/ridge_regression_predictions.png'
+                            ) }}?v=10"
+                            alt="Ridge Regression Predictions"
+                        >
+
+                    </div>
+
+
+                    <div class="prediction-card">
+
+                        <h4>
+                            Lasso Regression — L1
+                        </h4>
+
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename='plots/lasso_regression_predictions.png'
+                            ) }}?v=10"
+                            alt="Lasso Regression Predictions"
+                        >
+
+                    </div>
+
+                </div>
 
             </div>
 
@@ -496,9 +883,60 @@
 
         {% endif %}
 
+
     </main>
 
 </div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+
+<script>
+
+function changeLinearApproach() {
+
+    const value =
+        document.getElementById("linearApproach").value;
+
+    const withoutSection =
+        document.getElementById("linearWithout");
+
+    const withSection =
+        document.getElementById("linearWith");
+
+    const allSection =
+        document.getElementById("linearAll");
+
+
+    withoutSection.classList.remove("show");
+    withSection.classList.remove("show");
+    allSection.classList.remove("show");
+
+
+    if (value === "without") {
+
+        withoutSection.classList.add("show");
+
+    }
+
+    else if (value === "with") {
+
+        withSection.classList.add("show");
+
+    }
+
+    else if (value === "all") {
+
+        allSection.classList.add("show");
+
+    }
+
+}
+
+</script>
+
 
 </body>
 

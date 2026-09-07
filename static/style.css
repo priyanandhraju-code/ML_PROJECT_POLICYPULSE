@@ -618,3 +618,547 @@ body {
     }
 
 }
+/* ============================================================
+   V5 TREE BASED MODELS
+   ============================================================ */
+
+
+/* ------------------------------------------------------------
+   ALGORITHM FORM
+   ------------------------------------------------------------ */
+
+.algorithm-form {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    margin-top: 20px;
+
+}
+
+
+.algorithm-form label {
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: #294866;
+
+}
+
+
+/* ------------------------------------------------------------
+   ALGORITHM DROPDOWN
+   ------------------------------------------------------------ */
+
+.algorithm-select {
+
+    width: 360px;
+
+    height: 48px;
+
+    padding: 0 15px;
+
+    background: #ffffff;
+
+    border: 1px solid #aebfd2;
+
+    border-radius: 7px;
+
+    color: #253b57;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    outline: none;
+
+}
+
+
+.algorithm-select:hover {
+
+    border-color: #244b75;
+
+}
+
+
+.algorithm-select:focus {
+
+    border-color: #244b75;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(36, 75, 117, 0.15);
+
+}
+
+
+/* ------------------------------------------------------------
+   RUN BUTTON
+   ------------------------------------------------------------ */
+
+.run-button {
+
+    height: 48px;
+
+    padding: 0 25px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #244b75;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+
+}
+
+
+.run-button:hover {
+
+    background: #1d3e63;
+
+    transform: translateY(-1px);
+
+}
+
+
+.run-button:active {
+
+    transform: translateY(0);
+
+}
+
+
+/* ------------------------------------------------------------
+   MODEL NAME
+   ------------------------------------------------------------ */
+
+.model-name {
+
+    font-size: 17px !important;
+
+    font-weight: 600;
+
+    color: #244b75 !important;
+
+}
+
+
+/* ------------------------------------------------------------
+   PLOT CARD
+   ------------------------------------------------------------ */
+
+.plot-card {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+.plot-card img {
+
+    max-width: 100%;
+
+    width: 800px;
+
+    height: auto;
+
+    border-radius: 8px;
+
+}
+
+
+/* ------------------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------------------ */
+
+@media (max-width: 800px) {
+
+    .algorithm-form {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .algorithm-select {
+
+        width: 100%;
+
+    }
+
+
+    .run-button {
+
+        width: 100%;
+
+    }
+
+}
+/* ============================================================
+   V4 LOGISTIC REGRESSION - PAGE SPECIFIC FIX
+   ============================================================ */
+
+/*
+   IMPORTANT:
+   These rules are intentionally scoped to .logistic-page
+   so that Linear Regression, Preprocessing and V5 Tree Based
+   Models are not affected.
+*/
+
+
+/* ============================================================
+   MAIN LOGISTIC PAGE
+   ============================================================ */
+
+.logistic-page {
+    display: block;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+
+/* ============================================================
+   LOGISTIC SUMMARY CARDS
+   ============================================================ */
+
+.logistic-page .logistic-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+
+    width: 100%;
+
+    margin-bottom: 30px;
+}
+
+
+/* ============================================================
+   LOGISTIC SECTION CARDS
+   ============================================================ */
+
+.logistic-page .logistic-section {
+    display: block;
+
+    position: relative;
+
+    float: none;
+
+    clear: both;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    margin-top: 24px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   LOGISTIC TABLES
+   ============================================================ */
+
+.logistic-page .table-wrapper {
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    box-sizing: border-box;
+}
+
+
+.logistic-page .data-table {
+    width: 100%;
+
+    min-width: 700px;
+
+    border-collapse: collapse;
+}
+
+
+/* ============================================================
+   SINGLE COMPARISON GRAPH
+   ============================================================ */
+
+.logistic-single-plot {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    padding: 20px;
+
+    margin-top: 20px;
+
+    background: #f8fafc;
+
+    border: 1px solid #dfe6ef;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+}
+
+
+.logistic-single-plot img {
+    display: block;
+
+    width: auto;
+
+    max-width: 100%;
+
+    height: auto;
+
+    margin: 0 auto;
+
+    border-radius: 6px;
+}
+
+
+/* ============================================================
+   CONFUSION MATRIX / ROC GRID
+   ============================================================ */
+
+.logistic-plot-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    margin-top: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   INDIVIDUAL LOGISTIC PLOT CARD
+   ============================================================ */
+
+.logistic-plot-card {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #dfe6ef;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+}
+
+
+/* ============================================================
+   PLOT TITLE
+   ============================================================ */
+
+.logistic-plot-card h4 {
+    width: 100%;
+
+    margin-bottom: 15px;
+
+    text-align: center;
+
+    color: #294866;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+}
+
+
+/* ============================================================
+   PLOT IMAGE
+   ============================================================ */
+
+.logistic-plot-card img {
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    height: auto;
+
+    margin: 0 auto;
+
+    border-radius: 6px;
+}
+
+
+/* ============================================================
+   EXTRA PROTECTION AGAINST GLOBAL OVERRIDES
+   ============================================================ */
+
+.logistic-page > .section-card {
+    position: relative;
+
+    display: block;
+
+    float: none;
+
+    clear: both;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    transform: none;
+}
+
+
+/* Prevent V5 .plot-card rules from affecting Logistic page */
+.logistic-page .plot-card {
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+}
+
+
+/* ============================================================
+   RESPONSIVE - 3 PLOTS → 2 PLOTS
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    .logistic-page .logistic-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    .logistic-page .logistic-plot-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ============================================================
+   RESPONSIVE - 2 PLOTS → 1 PLOT
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+    .logistic-page .logistic-summary {
+        grid-template-columns: 1fr;
+    }
+
+
+    .logistic-page .logistic-plot-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .logistic-page .logistic-section {
+        padding: 20px;
+    }
+
+
+    .logistic-single-plot {
+        padding: 12px;
+    }
+
+
+    .logistic-plot-card {
+        padding: 15px;
+    }
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 550px) {
+
+    .logistic-page .logistic-summary {
+        grid-template-columns: 1fr;
+    }
+
+
+    .logistic-page .logistic-plot-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .logistic-page .data-table {
+        min-width: 650px;
+    }
+
+}

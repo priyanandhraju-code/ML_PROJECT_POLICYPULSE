@@ -14,8 +14,451 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=7"
+        href="{{ url_for('static', filename='style.css') }}?v=10"
     >
+
+    <style>
+
+        /* =========================================================
+           PREPROCESSING PAGE
+           ========================================================= */
+
+        .preprocessing-page {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .preprocessing-page *,
+        .preprocessing-page *::before,
+        .preprocessing-page *::after {
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        .preprocessing-header {
+            margin-bottom: 25px;
+        }
+
+        .preprocessing-header h2 {
+            margin-bottom: 8px;
+        }
+
+        .preprocessing-header p {
+            margin-top: 0;
+        }
+
+
+        /* =========================================================
+           GENERAL SECTION
+           ========================================================= */
+
+        .prep-section {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .prep-section-title {
+            margin-bottom: 15px;
+        }
+
+        .prep-section-title h2 {
+            margin-bottom: 5px;
+        }
+
+        .prep-section-title p {
+            margin-top: 0;
+            color: #666;
+        }
+
+
+        /* =========================================================
+           SUMMARY CARDS
+           ========================================================= */
+
+        .prep-card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            width: 100%;
+        }
+
+        .prep-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8e8e8;
+            min-width: 0;
+        }
+
+        .prep-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 17px;
+        }
+
+        .prep-card .big-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+        }
+
+        .prep-card .small-label {
+            color: #777;
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           PROCESS STEPS
+           ========================================================= */
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .process-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        }
+
+        .process-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .process-card p {
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+
+        /* =========================================================
+           IQR SECTION
+           ========================================================= */
+
+        .iqr-container {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            border: 1px solid #e2e2e2;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .iqr-introduction {
+            background: #f7f9fc;
+            border-left: 5px solid #333;
+            padding: 16px 18px;
+            border-radius: 8px;
+            margin-bottom: 22px;
+            line-height: 1.65;
+        }
+
+        .formula-box {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 18px;
+            margin: 18px 0 25px 0;
+            font-size: 16px;
+            line-height: 1.9;
+        }
+
+        .formula-box strong {
+            font-size: 17px;
+        }
+
+        .iqr-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .iqr-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .iqr-table th,
+        .iqr-table td {
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .iqr-table th {
+            background: #f3f4f6;
+            font-weight: 700;
+        }
+
+        .iqr-table td.value {
+            font-weight: 700;
+        }
+
+        .fence-row td {
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           OUTLIER COUNTS
+           ========================================================= */
+
+        .outlier-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 25px;
+        }
+
+        .outlier-card {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+        }
+
+        .outlier-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .outlier-number {
+            font-size: 30px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+
+        /* =========================================================
+           OUTLIER TREATMENT
+           ========================================================= */
+
+        .treatment-box {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+        }
+
+        .treatment-box h3 {
+            margin-top: 0;
+        }
+
+        .treatment-box p {
+            line-height: 1.7;
+        }
+
+        .treatment-formula {
+            font-family: monospace;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+
+        /* =========================================================
+           BEFORE / AFTER TABLE
+           ========================================================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid #ddd;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .stats-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stats-table th,
+        .stats-table td {
+            border: 1px solid #ddd;
+            padding: 11px 13px;
+            text-align: left;
+        }
+
+        .stats-table th {
+            background: #f3f4f6;
+        }
+
+
+        /* =========================================================
+           FEATURE TRANSFORMATION
+           ========================================================= */
+
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+        }
+
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        .feature-table th,
+        .feature-table td {
+            border: 1px solid #ddd;
+            padding: 13px 15px;
+            text-align: left;
+        }
+
+        .feature-table th {
+            background: #f3f4f6;
+        }
+
+
+        /* =========================================================
+           SCALING
+           ========================================================= */
+
+        .scaling-box {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            border: 1px solid #ddd;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .feature-tag {
+            padding: 9px 14px;
+            border-radius: 20px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            font-weight: 600;
+        }
+
+        .scaling-formula {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin-top: 15px;
+        }
+
+
+        /* =========================================================
+           FINAL DATASET
+           ========================================================= */
+
+        .final-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+
+        /* =========================================================
+           NEXT STAGE
+           ========================================================= */
+
+        .next-stage-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .next-stage-card {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .next-stage-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+        }
+
+        .next-stage-card h3 {
+            margin-top: 0;
+        }
+
+        .next-stage-card p {
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        @media (max-width: 1000px) {
+
+            .prep-card-grid,
+            .final-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .process-grid,
+            .stats-grid,
+            .outlier-grid,
+            .next-stage-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .prep-card-grid,
+            .final-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .iqr-container,
+            .prep-card,
+            .process-card,
+            .stats-card,
+            .scaling-box {
+                padding: 16px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -54,7 +497,6 @@
     <aside class="sidebar">
 
         <ul>
-
 
             <!-- HOME -->
 
@@ -174,14 +616,19 @@
 
             <li>
 
-                <div class="menu-item disabled">
+                <a
+                    href="{{ url_for('tree_based_page') }}"
+                    class="menu-item
+                    {% if active == 'tree-based' %}
+                    active
+                    {% endif %}"
+                >
 
                     🌳 Tree Based Models
 
-                </div>
+                </a>
 
             </li>
-
 
         </ul>
 
@@ -192,19 +639,27 @@
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content">
+    <main class="content preprocessing-page">
 
 
-        <!-- PAGE HEADER -->
+        <!-- ====================================================
+             PAGE HEADER
+             ==================================================== -->
 
-        <h2>
-            ⚙️ Data Preprocessing
-        </h2>
+        <div class="preprocessing-header">
 
-        <p>
-            Preparing the PolicyPulse dataset for machine learning models.
-        </p>
+            <h2>
+                ⚙️ Data Preprocessing
+            </h2>
 
+            <p>
+                Preparing the PolicyPulse dataset for machine learning models.
+            </p>
+
+        </div>
+
+
+        <!-- ERROR -->
 
         {% if error %}
 
@@ -220,92 +675,91 @@
         {% if preprocessing_result is not none %}
 
 
-        <!-- =====================================================
+        <!-- ====================================================
              PREPROCESSING COMPLETED
-             ===================================================== -->
+             ==================================================== -->
 
-        <div class="section-card">
+        <section class="prep-section">
 
-            <h2>
-                Preprocessing Completed
-            </h2>
+            <div class="prep-section-title">
 
-            <p>
-                The PolicyPulse dataset has been successfully
-                preprocessed and is ready for the regression
-                and classification models.
-            </p>
+                <h2>
+                    ✅ Preprocessing Completed
+                </h2>
 
+                <p>
+                    The PolicyPulse dataset has been successfully
+                    processed and is ready for machine learning.
+                </p>
 
-            <!-- =================================================
-                 SUMMARY CARDS
-                 ================================================= -->
-
-            <div class="card-container">
+            </div>
 
 
-                <div class="card">
+            <div class="prep-card-grid">
+
+
+                <div class="prep-card">
 
                     <h3>
                         Original Dataset
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         381,109
                     </p>
 
-                    <span>
+                    <span class="small-label">
                         Rows
                     </span>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Final Dataset
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         {{ preprocessing_result.shape[0] }}
                     </p>
 
-                    <span>
+                    <span class="small-label">
                         Rows
                     </span>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Features
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         {{ preprocessing_result.shape[1] - 1 }}
                     </p>
 
-                    <span>
+                    <span class="small-label">
                         Predictor Features
                     </span>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Target
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         Response
                     </p>
 
-                    <span>
+                    <span class="small-label">
                         Binary Classification
                     </span>
 
@@ -314,111 +768,115 @@
 
             </div>
 
-
-            <!-- =================================================
-                 PREPROCESSING STEPS
-                 ================================================= -->
-
-            <h2>
-                Preprocessing Steps
-            </h2>
+        </section>
 
 
-            <div class="card-container">
+        <!-- ====================================================
+             PREPROCESSING STEPS
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    🔄 Preprocessing Pipeline
+                </h2>
+
+                <p>
+                    Sequence of transformations applied to the dataset.
+                </p>
+
+            </div>
 
 
-                <!-- STEP 1 -->
+            <div class="process-grid">
 
-                <div class="section-card">
+
+                <div class="process-card">
 
                     <h3>
                         1. Remove ID
                     </h3>
 
                     <p>
-                        The ID column was removed because it does
-                        not provide useful predictive information.
+                        The <strong>id</strong> column was removed because
+                        it is an identifier and does not provide useful
+                        predictive information.
                     </p>
 
                 </div>
 
 
-                <!-- STEP 2 -->
-
-                <div class="section-card">
+                <div class="process-card">
 
                     <h3>
                         2. Missing Value Handling
                     </h3>
 
                     <p>
-                        Missing numerical values are handled using
-                        the median and categorical values using
-                        the mode.
+                        Missing values were checked and handled.
+                        The final preprocessing result contains
+                        <strong>0 missing values</strong>.
                     </p>
 
                 </div>
 
 
-                <!-- STEP 3 -->
-
-                <div class="section-card">
+                <div class="process-card">
 
                     <h3>
                         3. Categorical Encoding
                     </h3>
 
                     <p>
-                        Categorical variables are converted into
-                        numerical features using one-hot encoding.
+                        Categorical variables including
+                        Gender, Vehicle_Age, Vehicle_Damage,
+                        Region_Code and Policy_Sales_Channel
+                        were converted into numerical features.
                     </p>
 
                 </div>
 
 
-                <!-- STEP 4 -->
-
-                <div class="section-card">
+                <div class="process-card">
 
                     <h3>
-                        4. Outlier Treatment
+                        4. Train-Test Split
                     </h3>
 
                     <p>
-                        Extreme Annual Premium values are handled
-                        using the IQR-based clipping method.
+                        The dataset was divided into training and testing
+                        sets using an <strong>80:20 split</strong>.
                     </p>
 
                 </div>
 
 
-                <!-- STEP 5 -->
-
-                <div class="section-card">
+                <div class="process-card">
 
                     <h3>
-                        5. Train-Test Split
+                        5. IQR Outlier Treatment
                     </h3>
 
                     <p>
-                        The dataset is divided into training and
-                        testing datasets using an 80:20 split.
+                        Outliers in <strong>Annual_Premium</strong> were
+                        detected using the Interquartile Range method
+                        and handled using clipping.
                     </p>
 
                 </div>
 
 
-                <!-- STEP 6 -->
-
-                <div class="section-card">
+                <div class="process-card">
 
                     <h3>
                         6. Standard Scaling
                     </h3>
 
                     <p>
-                        Age, Annual Premium and Vintage are
-                        standardized using StandardScaler.
+                        Age, Annual_Premium and Vintage were standardized
+                        using StandardScaler.
                     </p>
 
                 </div>
@@ -426,36 +884,96 @@
 
             </div>
 
-
-            <!-- =================================================
-                 FEATURE TRANSFORMATION
-                 ================================================= -->
-
-            <h2>
-                Feature Transformation
-            </h2>
+        </section>
 
 
-            <div class="section-card">
+        <!-- ====================================================
+             IQR OUTLIER ANALYSIS
+             ==================================================== -->
 
-                <div class="table-wrapper">
+        <section class="prep-section">
 
-                    <table class="data-table">
+            <div class="prep-section-title">
+
+                <h2>
+                    📊 IQR Outlier Analysis
+                </h2>
+
+                <p>
+                    Detailed calculation of the Interquartile Range
+                    for Annual_Premium.
+                </p>
+
+            </div>
+
+
+            <div class="iqr-container">
+
+
+                <div class="iqr-introduction">
+
+                    <strong>Feature analyzed:</strong>
+                    Annual_Premium
+
+                    <br><br>
+
+                    The IQR method was applied using the
+                    <strong>training dataset</strong>.
+                    The resulting training fences were then also
+                    applied to the testing data.
+
+                </div>
+
+
+                <!-- FORMULAS -->
+
+                <div class="formula-box">
+
+                    <strong>IQR Formula:</strong>
+
+                    <br>
+
+                    IQR = Q3 − Q1
+
+                    <br><br>
+
+                    <strong>Lower Fence:</strong>
+
+                    <br>
+
+                    Q1 − (1.5 × IQR)
+
+                    <br><br>
+
+                    <strong>Upper Fence:</strong>
+
+                    <br>
+
+                    Q3 + (1.5 × IQR)
+
+                </div>
+
+
+                <!-- IQR TABLE -->
+
+                <div class="iqr-table-wrapper">
+
+                    <table class="iqr-table">
 
                         <thead>
 
                         <tr>
 
                             <th>
-                                Feature Type
+                                IQR Component
                             </th>
 
                             <th>
-                                Features
+                                Calculation
                             </th>
 
                             <th>
-                                Transformation
+                                Value
                             </th>
 
                         </tr>
@@ -469,33 +987,15 @@
                         <tr>
 
                             <td>
-                                Identifier
+                                Q1
                             </td>
 
                             <td>
-                                id
+                                25th Percentile
                             </td>
 
-                            <td>
-                                Removed
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-                                Categorical
-                            </td>
-
-                            <td>
-                                Gender, Vehicle_Age,
-                                Vehicle_Damage
-                            </td>
-
-                            <td>
-                                One-Hot Encoding
+                            <td class="value">
+                                24,403
                             </td>
 
                         </tr>
@@ -504,34 +1004,15 @@
                         <tr>
 
                             <td>
-                                Categorical Codes
+                                Q3
                             </td>
 
                             <td>
-                                Region_Code,
-                                Policy_Sales_Channel
+                                75th Percentile
                             </td>
 
-                            <td>
-                                One-Hot Encoding
-                            </td>
-
-                        </tr>
-
-
-                        <tr>
-
-                            <td>
-                                Numerical
-                            </td>
-
-                            <td>
-                                Age, Annual_Premium,
-                                Vintage
-                            </td>
-
-                            <td>
-                                Standard Scaling
+                            <td class="value">
+                                39,443
                             </td>
 
                         </tr>
@@ -540,33 +1021,49 @@
                         <tr>
 
                             <td>
-                                Binary
+                                IQR
                             </td>
 
                             <td>
-                                Driving_License,
-                                Previously_Insured
+                                39,443 − 24,403
                             </td>
 
-                            <td>
-                                Kept as 0 / 1
+                            <td class="value">
+                                15,040
                             </td>
 
                         </tr>
 
 
-                        <tr>
+                        <tr class="fence-row">
 
                             <td>
-                                Target
+                                Lower Fence
                             </td>
 
                             <td>
-                                Response
+                                24,403 − (1.5 × 15,040)
+                            </td>
+
+                            <td class="value">
+                                1,843
+                            </td>
+
+                        </tr>
+
+
+                        <tr class="fence-row">
+
+                            <td>
+                                Upper Fence
                             </td>
 
                             <td>
-                                Binary 0 / 1
+                                39,443 + (1.5 × 15,040)
+                            </td>
+
+                            <td class="value">
+                                62,003
                             </td>
 
                         </tr>
@@ -578,67 +1075,559 @@
 
                 </div>
 
+
+                <!-- OUTLIER COUNTS -->
+
+                <div class="outlier-grid">
+
+
+                    <div class="outlier-card">
+
+                        <h3>
+                            Training Outliers
+                        </h3>
+
+                        <p class="outlier-number">
+                            8,280
+                        </p>
+
+                        <p>
+                            Training Annual_Premium values outside
+                            the IQR fences.
+                        </p>
+
+                    </div>
+
+
+                    <div class="outlier-card">
+
+                        <h3>
+                            Testing Values Outside Fences
+                        </h3>
+
+                        <p class="outlier-number">
+                            1,940
+                        </p>
+
+                        <p>
+                            Testing values outside the training-set
+                            IQR fences.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- TREATMENT -->
+
+                <div class="treatment-box">
+
+                    <h3>
+                        🛠️ Outlier Treatment
+                    </h3>
+
+                    <p>
+                        Instead of deleting the outlier rows, the
+                        <strong>Annual_Premium</strong> values were
+                        clipped to the calculated IQR boundaries.
+                    </p>
+
+                    <p>
+                        Therefore, values above
+                        <strong>62,003</strong> were replaced by
+                        <strong>62,003</strong>.
+                    </p>
+
+                    <p>
+                        Values below the lower fence would be clipped
+                        to <strong>1,843</strong>.
+                    </p>
+
+                    <div class="treatment-formula">
+
+                        Lower Limit = 1,843
+
+                        <br>
+
+                        Upper Limit = 62,003
+
+                        <br><br>
+
+                        Annual_Premium =
+                        clip(Annual_Premium, 1,843, 62,003)
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================================
+             BEFORE / AFTER OUTLIER STATISTICS
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    📈 Annual Premium Before & After Treatment
+                </h2>
+
+                <p>
+                    Comparison of the training and testing distributions
+                    before and after outlier clipping.
+                </p>
+
             </div>
 
 
-            <!-- =================================================
-                 FINAL DATASET
-                 ================================================= -->
-
-            <h2>
-                Final Dataset Information
-            </h2>
+            <div class="stats-grid">
 
 
-            <div class="card-container">
+                <!-- TRAINING -->
+
+                <div class="stats-card">
+
+                    <h3>
+                        Training Data
+                    </h3>
+
+                    <table class="stats-table">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                Statistic
+                            </th>
+
+                            <th>
+                                Before
+                            </th>
+
+                            <th>
+                                After
+                            </th>
+
+                        </tr>
+
+                        </thead>
 
 
-                <div class="card">
+                        <tbody>
+
+                        <tr>
+                            <td>Minimum</td>
+                            <td>2,630</td>
+                            <td>2,630</td>
+                        </tr>
+
+                        <tr>
+                            <td>Q1</td>
+                            <td>24,403</td>
+                            <td>24,403</td>
+                        </tr>
+
+                        <tr>
+                            <td>Median</td>
+                            <td>31,697</td>
+                            <td>31,697</td>
+                        </tr>
+
+                        <tr>
+                            <td>Q3</td>
+                            <td>39,443</td>
+                            <td>39,443</td>
+                        </tr>
+
+                        <tr>
+                            <td>Maximum</td>
+                            <td>540,165</td>
+                            <td>62,003</td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- TESTING -->
+
+                <div class="stats-card">
+
+                    <h3>
+                        Testing Data
+                    </h3>
+
+                    <table class="stats-table">
+
+                        <thead>
+
+                        <tr>
+
+                            <th>
+                                Statistic
+                            </th>
+
+                            <th>
+                                Before
+                            </th>
+
+                            <th>
+                                After
+                            </th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        <tr>
+                            <td>Minimum</td>
+                            <td>2,630</td>
+                            <td>2,630</td>
+                        </tr>
+
+                        <tr>
+                            <td>Q1</td>
+                            <td>24,419</td>
+                            <td>24,419</td>
+                        </tr>
+
+                        <tr>
+                            <td>Median</td>
+                            <td>31,559.5</td>
+                            <td>31,559.5</td>
+                        </tr>
+
+                        <tr>
+                            <td>Q3</td>
+                            <td>39,206</td>
+                            <td>39,206</td>
+                        </tr>
+
+                        <tr>
+                            <td>Maximum</td>
+                            <td>540,165</td>
+                            <td>62,003</td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================================
+             FEATURE TRANSFORMATION
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    🔄 Feature Transformation
+                </h2>
+
+                <p>
+                    Transformation applied to each feature type.
+                </p>
+
+            </div>
+
+
+            <div class="table-card">
+
+                <table class="feature-table">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Feature Type
+                        </th>
+
+                        <th>
+                            Features
+                        </th>
+
+                        <th>
+                            Transformation
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                    <tr>
+
+                        <td>
+                            Identifier
+                        </td>
+
+                        <td>
+                            id
+                        </td>
+
+                        <td>
+                            Removed
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Categorical
+                        </td>
+
+                        <td>
+                            Gender,
+                            Vehicle_Age,
+                            Vehicle_Damage
+                        </td>
+
+                        <td>
+                            One-Hot Encoding
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Categorical Codes
+                        </td>
+
+                        <td>
+                            Region_Code,
+                            Policy_Sales_Channel
+                        </td>
+
+                        <td>
+                            One-Hot Encoding
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Numerical
+                        </td>
+
+                        <td>
+                            Age,
+                            Annual_Premium,
+                            Vintage
+                        </td>
+
+                        <td>
+                            Standard Scaling
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Binary
+                        </td>
+
+                        <td>
+                            Driving_License,
+                            Previously_Insured
+                        </td>
+
+                        <td>
+                            Kept as 0 / 1
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Target
+                        </td>
+
+                        <td>
+                            Response
+                        </td>
+
+                        <td>
+                            Binary 0 / 1
+                        </td>
+
+                    </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================================
+             STANDARD SCALING
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    📏 Standard Scaling
+                </h2>
+
+                <p>
+                    Continuous numerical features standardized before modeling.
+                </p>
+
+            </div>
+
+
+            <div class="scaling-box">
+
+                <h3>
+                    Features Selected for Scaling
+                </h3>
+
+
+                <div class="feature-tags">
+
+                    <span class="feature-tag">
+                        Age
+                    </span>
+
+                    <span class="feature-tag">
+                        Annual_Premium
+                    </span>
+
+                    <span class="feature-tag">
+                        Vintage
+                    </span>
+
+                </div>
+
+
+                <p>
+                    StandardScaler transforms each feature using:
+                </p>
+
+
+                <div class="scaling-formula">
+
+                    z = (x − μ) / σ
+
+                </div>
+
+
+                <p>
+                    where <strong>μ</strong> is the training mean and
+                    <strong>σ</strong> is the training standard deviation.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ====================================================
+             FINAL DATASET
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    📦 Final Dataset Information
+                </h2>
+
+            </div>
+
+
+            <div class="final-grid">
+
+
+                <div class="prep-card">
 
                     <h3>
                         Rows
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         {{ preprocessing_result.shape[0] }}
                     </p>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Columns
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         {{ preprocessing_result.shape[1] }}
                     </p>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Predictor Features
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         {{ preprocessing_result.shape[1] - 1 }}
                     </p>
 
                 </div>
 
 
-                <div class="card">
+                <div class="prep-card">
 
                     <h3>
                         Missing Values
                     </h3>
 
-                    <p>
+                    <p class="big-value">
                         0
                     </p>
 
@@ -647,23 +1636,30 @@
 
             </div>
 
-
-            <!-- =================================================
-                 NEXT STAGE
-                 ================================================= -->
-
-            <h2>
-                Next Modeling Stage
-            </h2>
+        </section>
 
 
-            <div class="card-container">
+        <!-- ====================================================
+             NEXT MODELING STAGE
+             ==================================================== -->
+
+        <section class="prep-section">
+
+            <div class="prep-section-title">
+
+                <h2>
+                    🚀 Next Modeling Stage
+                </h2>
+
+            </div>
+
+
+            <div class="next-stage-grid">
 
 
                 <a
                     href="{{ url_for('linear_regression_page') }}"
-                    class="section-card"
-                    style="text-decoration: none;"
+                    class="next-stage-card"
                 >
 
                     <h3>
@@ -672,7 +1668,7 @@
 
                     <p>
                         Continue to Linear Regression with
-                        regularized and non-regularized models.
+                        non-regularized, Ridge and Lasso approaches.
                     </p>
 
                 </a>
@@ -680,8 +1676,7 @@
 
                 <a
                     href="{{ url_for('logistic_regression_page') }}"
-                    class="section-card"
-                    style="text-decoration: none;"
+                    class="next-stage-card"
                 >
 
                     <h3>
@@ -690,7 +1685,25 @@
 
                     <p>
                         Continue to Logistic Regression with
-                        Ridge and Lasso regularization.
+                        non-regularized, Ridge and Lasso approaches.
+                    </p>
+
+                </a>
+
+
+                <a
+                    href="{{ url_for('tree_based_page') }}"
+                    class="next-stage-card"
+                >
+
+                    <h3>
+                        🌳 Tree Based Models
+                    </h3>
+
+                    <p>
+                        Continue to Decision Tree, Random Forest,
+                        Extra Trees, Gradient Boosting, AdaBoost,
+                        XGBoost and LightGBM.
                     </p>
 
                 </a>
@@ -698,8 +1711,7 @@
 
             </div>
 
-
-        </div>
+        </section>
 
 
         {% endif %}

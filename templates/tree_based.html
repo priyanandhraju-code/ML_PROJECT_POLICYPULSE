@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        PolicyPulse - Tree Based Models
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}?v=7"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ============================================================
+     TOP BAR
+     ============================================================ -->
+
+<header class="topbar">
+
+    <h1>
+        PolicyPulse
+    </h1>
+
+    <p>
+        Vehicle Insurance Response Analysis
+    </p>
+
+</header>
+
+
+<!-- ============================================================
+     MAIN LAYOUT
+     ============================================================ -->
+
+<div class="layout">
+
+
+    <!-- ========================================================
+         SIDEBAR
+         ======================================================== -->
+
+    <aside class="sidebar">
+
+        <ul>
+
+            <li>
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="menu-item"
+                >
+                    🏠 Home
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('data_loading') }}"
+                    class="menu-item"
+                >
+                    📂 Data Loading
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('eda_page') }}"
+                    class="menu-item"
+                >
+                    📊 EDA
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('preprocessing_page') }}"
+                    class="menu-item"
+                >
+                    ⚙️ Preprocessing
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('linear_regression_page') }}"
+                    class="menu-item"
+                >
+                    📈 Linear Regression
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('logistic_regression_page') }}"
+                    class="menu-item"
+                >
+                    🔢 Logistic Regression
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('tree_based_page') }}"
+                    class="menu-item active"
+                >
+                    🌳 Tree Based Models
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+    <!-- ========================================================
+         MAIN CONTENT
+         ======================================================== -->
+
+    <main class="content">
+
+
+        <h1>
+            🌳 Tree Based Models
+        </h1>
+
+
+        <p>
+            V5 — Tree based classification algorithms
+            for predicting PolicyPulse customer response.
+        </p>
+
+
+        <!-- ====================================================
+             ERROR
+             ==================================================== -->
+
+        {% if error %}
+
+        <div class="error">
+
+            {{ error }}
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- ====================================================
+             ALGORITHM SELECTION
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                Select Algorithm
+            </h2>
+
+
+            <p>
+                Choose one of the seven tree based
+                classification algorithms.
+            </p>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('tree_based_page') }}"
+            >
+
+                <div class="algorithm-form">
+
+
+                    <label
+                        for="algorithm"
+                    >
+                        Algorithm:
+                    </label>
+
+
+                    <select
+                        id="algorithm"
+                        name="algorithm"
+                        class="algorithm-select"
+                    >
+
+
+                        <option
+                            value="decision_tree"
+
+                            {% if selected_algorithm
+                                  == "decision_tree" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            Decision Tree
+                        </option>
+
+
+                        <option
+                            value="random_forest"
+
+                            {% if selected_algorithm
+                                  == "random_forest" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            Random Forest
+                        </option>
+
+
+                        <option
+                            value="extra_trees"
+
+                            {% if selected_algorithm
+                                  == "extra_trees" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            Extra Trees
+                        </option>
+
+
+                        <option
+                            value="gradient_boosting"
+
+                            {% if selected_algorithm
+                                  == "gradient_boosting" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            Gradient Boosting
+                        </option>
+
+
+                        <option
+                            value="adaboost"
+
+                            {% if selected_algorithm
+                                  == "adaboost" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            AdaBoost
+                        </option>
+
+
+                        <option
+                            value="xgboost"
+
+                            {% if selected_algorithm
+                                  == "xgboost" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            XGBoost
+                        </option>
+
+
+                        <option
+                            value="lightgbm"
+
+                            {% if selected_algorithm
+                                  == "lightgbm" %}
+
+                                selected
+
+                            {% endif %}
+                        >
+                            LightGBM
+                        </option>
+
+
+                    </select>
+
+
+                    <button
+                        type="submit"
+                        class="run-button"
+                    >
+                        Run Algorithm
+                    </button>
+
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        {% if result is not none %}
+
+
+        <!-- ====================================================
+             DATASET INFORMATION
+             ==================================================== -->
+
+        <div class="card-container">
+
+
+            <div class="card">
+
+                <h3>
+                    Algorithm
+                </h3>
+
+                <p class="model-name">
+                    {{ result.algorithm }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Dataset Rows
+                </h3>
+
+                <p>
+                    {{ result.dataset_shape[0] }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Features
+                </h3>
+
+                <p>
+                    {{ result.feature_count }}
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>
+                    Training Records
+                </h3>
+
+                <p>
+                    {{ result.training_shape[0] }}
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ====================================================
+             PERFORMANCE
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                Model Performance
+            </h2>
+
+
+            <div class="table-wrapper">
+
+                <table class="data-table">
+
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Metric
+                        </th>
+
+                        <th>
+                            Score
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <tr>
+
+                        <td>
+                            Accuracy
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["Accuracy"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Precision
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["Precision"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Recall
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["Recall"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            F1 Score
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["F1 Score"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            ROC AUC
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["ROC AUC"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             CONFUSION MATRIX
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                Confusion Matrix
+            </h2>
+
+
+            <div class="plot-card">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/' +
+                        result['confusion_matrix_plot']
+                    ) }}?v=7"
+
+                    alt="Confusion Matrix"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             ROC CURVE
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                ROC Curve
+            </h2>
+
+
+            <div class="plot-card">
+
+                <img
+                    src="{{ url_for(
+                        'static',
+                        filename='plots/' +
+                        result['roc_curve_plot']
+                    ) }}?v=7"
+
+                    alt="ROC Curve"
+                >
+
+            </div>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

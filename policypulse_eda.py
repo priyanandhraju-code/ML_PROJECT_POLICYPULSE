@@ -499,17 +499,17 @@ def run_eda():
     print("=" * 80)
 
 
+    # Only continuous numerical variables are appropriate for
+    # numerical outlier boxplots. Region_Code and
+    # Policy_Sales_Channel are categorical codes, not continuous
+    # measurements, so they are intentionally excluded.
     box_cols = [
 
         "Age",
 
         "Annual_Premium",
 
-        "Vintage",
-
-        "Region_Code",
-
-        "Policy_Sales_Channel"
+        "Vintage"
 
     ]
 
@@ -568,10 +568,26 @@ def run_eda():
     print("=" * 80)
 
 
-    numeric_data = data.select_dtypes(
-        include=[np.number]
-    )
+    # Correlation is calculated only for continuous numerical
+    # variables. Region_Code and Policy_Sales_Channel are
+    # categorical codes and therefore should not be interpreted
+    # as continuous quantities. The ID column is also excluded.
+    correlation_columns = [
+        "Age",
+        "Annual_Premium",
+        "Vintage",
+        "Driving_License",
+        "Previously_Insured",
+        "Response"
+    ]
 
+    correlation_columns = [
+        col
+        for col in correlation_columns
+        if col in data.columns
+    ]
+
+    numeric_data = data[correlation_columns]
 
     corr = numeric_data.corr()
 
@@ -1453,6 +1469,16 @@ def run_eda():
 
         "response_rate":
             response_rate,
+
+        "target_distribution": (
+            {
+                str(status): int(count)
+                for status, count
+                in data["Response"].value_counts().sort_index().items()
+            }
+            if "Response" in data.columns
+            else {}
+        ),
 
         "missing_values": {
 

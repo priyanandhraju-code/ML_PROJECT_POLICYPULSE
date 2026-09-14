@@ -16,7 +16,7 @@
 
     <link
         rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=7"
+        href="{{ url_for('static', filename='style.css') }}?v=11"
     >
 
 </head>
@@ -219,12 +219,9 @@
 
                         <option
                             value="decision_tree"
-
                             {% if selected_algorithm
                                   == "decision_tree" %}
-
                                 selected
-
                             {% endif %}
                         >
                             Decision Tree
@@ -233,12 +230,9 @@
 
                         <option
                             value="random_forest"
-
                             {% if selected_algorithm
                                   == "random_forest" %}
-
                                 selected
-
                             {% endif %}
                         >
                             Random Forest
@@ -247,12 +241,9 @@
 
                         <option
                             value="extra_trees"
-
                             {% if selected_algorithm
                                   == "extra_trees" %}
-
                                 selected
-
                             {% endif %}
                         >
                             Extra Trees
@@ -261,12 +252,9 @@
 
                         <option
                             value="gradient_boosting"
-
                             {% if selected_algorithm
                                   == "gradient_boosting" %}
-
                                 selected
-
                             {% endif %}
                         >
                             Gradient Boosting
@@ -275,12 +263,9 @@
 
                         <option
                             value="adaboost"
-
                             {% if selected_algorithm
                                   == "adaboost" %}
-
                                 selected
-
                             {% endif %}
                         >
                             AdaBoost
@@ -289,12 +274,9 @@
 
                         <option
                             value="xgboost"
-
                             {% if selected_algorithm
                                   == "xgboost" %}
-
                                 selected
-
                             {% endif %}
                         >
                             XGBoost
@@ -303,12 +285,9 @@
 
                         <option
                             value="lightgbm"
-
                             {% if selected_algorithm
                                   == "lightgbm" %}
-
                                 selected
-
                             {% endif %}
                         >
                             LightGBM
@@ -409,6 +388,11 @@
             </h2>
 
 
+            <p>
+                Balanced Accuracy is included because the Response target is imbalanced.
+            </p>
+
+
             <div class="table-wrapper">
 
                 <table class="data-table">
@@ -443,6 +427,21 @@
                         <td>
                             {{ "%.4f"|format(
                                 result["Accuracy"]
+                            ) }}
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Balanced Accuracy
+                        </td>
+
+                        <td>
+                            {{ "%.4f"|format(
+                                result["Balanced Accuracy"]
                             ) }}
                         </td>
 
@@ -532,12 +531,7 @@
             <div class="plot-card">
 
                 <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/' +
-                        result['confusion_matrix_plot']
-                    ) }}?v=7"
-
+                    src="{{ url_for('static', filename='plots/' + selected_algorithm + '_confusion_matrix.png') }}?v=11"
                     alt="Confusion Matrix"
                 >
 
@@ -560,12 +554,7 @@
             <div class="plot-card">
 
                 <img
-                    src="{{ url_for(
-                        'static',
-                        filename='plots/' +
-                        result['roc_curve_plot']
-                    ) }}?v=7"
-
+                    src="{{ url_for('static', filename='plots/' + selected_algorithm + '_roc_curve.png') }}?v=11"
                     alt="ROC Curve"
                 >
 
@@ -578,6 +567,7 @@
 
 
     </main>
+
 
 </div>
 

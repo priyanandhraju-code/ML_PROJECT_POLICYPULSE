@@ -10,211 +10,196 @@ def fix_outliers(
     test_df,
     feature="Annual_Premium"
 ):
+    """
+    Detect and treat outliers using the IQR method.
+
+    Important methodology:
+    - Q1, Q3 and the IQR fences are learned ONLY from training data.
+    - The same training fences are applied to testing data.
+    - No test-set statistics are used to learn the treatment limits.
+    - Outliers are clipped instead of deleting rows.
+    """
 
     train_df = train_df.copy()
     test_df = test_df.copy()
 
+    if feature not in train_df.columns:
+        raise ValueError(
+            f"Feature '{feature}' not found in training data."
+        )
+
+    if feature not in test_df.columns:
+        raise ValueError(
+            f"Feature '{feature}' not found in testing data."
+        )
 
     # ========================================================
-    # DISPLAY ORIGINAL STATISTICS
+    # ORIGINAL STATISTICS
     # ========================================================
 
-    print("\n" + "=" * 80)
-    print("OUTLIER DETECTION")
-    print("=" * 80)
+    train_before = train_df[feature].describe()
+    test_before = test_df[feature].describe()
 
+    # ========================================================
+    # CALCULATE QUARTILES FROM TRAINING DATA ONLY
+    # ========================================================
 
-    print("\nFeature:")
-
-    print(feature)
-
-
-    print("\nOriginal TRAINING statistics:")
-
-    print(
-        train_df[feature].describe()
+    q1 = float(
+        train_df[feature].quantile(0.25)
     )
 
-
-    print("\nOriginal TESTING statistics:")
-
-    print(
-        test_df[feature].describe()
+    q3 = float(
+        train_df[feature].quantile(0.75)
     )
 
+    iqr = float(q3 - q1)
 
     # ========================================================
-    # CALCULATE QUARTILES
+    # CALCULATE IQR FENCES
     # ========================================================
 
-    Q1 = train_df[feature].quantile(
-        0.25
+    lower_fence = float(
+        q1 - (1.5 * iqr)
     )
 
-    Q3 = train_df[feature].quantile(
-        0.75
+    upper_fence = float(
+        q3 + (1.5 * iqr)
     )
 
-
     # ========================================================
-    # CALCULATE IQR
-    # ========================================================
-
-    IQR = Q3 - Q1
-
-
-    # ========================================================
-    # CALCULATE FENCES
+    # IDENTIFY OUTLIERS
     # ========================================================
 
-    lower_fence = Q1 - (
-        1.5 * IQR
-    )
-
-    upper_fence = Q3 + (
-        1.5 * IQR
-    )
-
-
-    print("\n" + "=" * 80)
-    print("IQR OUTLIER CALCULATION")
-    print("=" * 80)
-
-
-    print("\nQ1:")
-
-    print(Q1)
-
-
-    print("\nQ3:")
-
-    print(Q3)
-
-
-    print("\nIQR:")
-
-    print(IQR)
-
-
-    print("\nLower Fence:")
-
-    print(lower_fence)
-
-
-    print("\nUpper Fence:")
-
-    print(upper_fence)
-
-
-    # ========================================================
-    # FIND TRAINING OUTLIERS
-    # ========================================================
-
-    train_outliers = train_df[
+    train_outlier_mask = (
         (train_df[feature] < lower_fence)
         |
         (train_df[feature] > upper_fence)
-    ]
+    )
 
-
-    # ========================================================
-    # FIND TESTING OUTLIERS
-    # ========================================================
-
-    test_outliers = test_df[
+    test_outlier_mask = (
         (test_df[feature] < lower_fence)
         |
         (test_df[feature] > upper_fence)
-    ]
-
-
-    print("\n" + "=" * 80)
-    print("OUTLIER COUNTS")
-    print("=" * 80)
-
-
-    print("\nTraining outliers:")
-
-    print(
-        len(train_outliers)
     )
 
-
-    print("\nTesting values outside training fences:")
-
-    print(
-        len(test_outliers)
+    train_outlier_count = int(
+        train_outlier_mask.sum()
     )
 
+    test_outlier_count = int(
+        test_outlier_mask.sum()
+    )
 
     # ========================================================
     # CLIP TRAINING DATA
     # ========================================================
 
-    train_df[feature] = train_df[
-        feature
-    ].clip(
-
+    train_df[feature] = train_df[feature].clip(
         lower=lower_fence,
-
         upper=upper_fence
-
     )
 
-
     # ========================================================
-    # CLIP TESTING DATA
+    # CLIP TESTING DATA USING TRAINING FENCES
     # ========================================================
 
-    # IMPORTANT:
-    #
-    # The test data is clipped using the fences learned
-    # from the training data.
-    #
-    # We do NOT calculate new Q1/Q3/IQR values for testing.
-    #
-    # This prevents information from the testing dataset
-    # influencing preprocessing.
-
-    test_df[feature] = test_df[
-        feature
-    ].clip(
-
+    test_df[feature] = test_df[feature].clip(
         lower=lower_fence,
-
         upper=upper_fence
-
     )
 
+    # ========================================================
+    # AFTER-TREATMENT STATISTICS
+    # ========================================================
+
+    train_after = train_df[feature].describe()
+    test_after = test_df[feature].describe()
 
     # ========================================================
-    # DISPLAY FINAL STATISTICS
+    # PRINT INFORMATION
     # ========================================================
 
     print("\n" + "=" * 80)
-    print("DATA AFTER OUTLIER HANDLING")
+    print("OUTLIER DETECTION AND IQR TREATMENT")
     print("=" * 80)
 
+    print("\nFeature:")
+    print(feature)
 
-    print("\nTraining statistics after outlier handling:")
+    print("\nTraining Q1:")
+    print(q1)
 
-    print(
-        train_df[feature].describe()
-    )
+    print("\nTraining Q3:")
+    print(q3)
 
+    print("\nIQR:")
+    print(iqr)
 
-    print("\nTesting statistics after outlier handling:")
+    print("\nLower Fence:")
+    print(lower_fence)
 
-    print(
-        test_df[feature].describe()
-    )
+    print("\nUpper Fence:")
+    print(upper_fence)
 
+    print("\nTraining outliers:")
+    print(train_outlier_count)
+
+    print("\nTesting values outside training fences:")
+    print(test_outlier_count)
+
+    print("\nTraining maximum before clipping:")
+    print(train_before["max"])
+
+    print("Training maximum after clipping:")
+    print(train_after["max"])
+
+    print("\nTesting maximum before clipping:")
+    print(test_before["max"])
+
+    print("Testing maximum after clipping:")
+    print(test_after["max"])
 
     # ========================================================
-    # RETURN
+    # INFORMATION FOR FLASK / HTML
     # ========================================================
 
-    return (
-        train_df,
-        test_df
-    )
+    iqr_info = {
+        "feature": feature,
+        "q1": q1,
+        "q3": q3,
+        "iqr": iqr,
+        "lower_fence": lower_fence,
+        "upper_fence": upper_fence,
+        "train_outliers": train_outlier_count,
+        "test_outliers": test_outlier_count,
+        "train_before": {
+            "min": float(train_before["min"]),
+            "q1": float(train_before["25%"]),
+            "median": float(train_before["50%"]),
+            "q3": float(train_before["75%"]),
+            "max": float(train_before["max"])
+        },
+        "train_after": {
+            "min": float(train_after["min"]),
+            "q1": float(train_after["25%"]),
+            "median": float(train_after["50%"]),
+            "q3": float(train_after["75%"]),
+            "max": float(train_after["max"])
+        },
+        "test_before": {
+            "min": float(test_before["min"]),
+            "q1": float(test_before["25%"]),
+            "median": float(test_before["50%"]),
+            "q3": float(test_before["75%"]),
+            "max": float(test_before["max"])
+        },
+        "test_after": {
+            "min": float(test_after["min"]),
+            "q1": float(test_after["25%"]),
+            "median": float(test_after["50%"]),
+            "q3": float(test_after["75%"]),
+            "max": float(test_after["max"])
+        }
+    }
+
+    return train_df, test_df, iqr_info

@@ -14,32 +14,20 @@
         PolicyPulse - Tree Based Models
     </title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=7"
-    >
+    {% include '_ui_head.html' %}
 
 </head>
 
 
-<body>
+<body data-page="{{ active|default('none') }}">
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 
 <!-- ============================================================
      TOP BAR
      ============================================================ -->
 
-<header class="topbar">
-
-    <h1>
-        PolicyPulse
-    </h1>
-
-    <p>
-        Vehicle Insurance Response Analysis
-    </p>
-
-</header>
+{% include '_topbar.html' %}
 
 
 <!-- ============================================================
@@ -53,123 +41,23 @@
          SIDEBAR
          ======================================================== -->
 
-    <aside class="sidebar">
-
-        <ul>
-
-            <li>
-
-                <a
-                    href="{{ url_for('index') }}"
-                    class="menu-item"
-                >
-                    🏠 Home
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('data_loading') }}"
-                    class="menu-item"
-                >
-                    📂 Data Loading
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('eda_page') }}"
-                    class="menu-item"
-                >
-                    📊 EDA
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('preprocessing_page') }}"
-                    class="menu-item"
-                >
-                    ⚙️ Preprocessing
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('linear_regression_page') }}"
-                    class="menu-item"
-                >
-                    📈 Linear Regression
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('logistic_regression_page') }}"
-                    class="menu-item"
-                >
-                    🔢 Logistic Regression
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('tree_based_page') }}"
-                    class="menu-item active"
-                >
-                    🌳 Tree Based Models
-                </a>
-
-            </li>
-
-            <li>
-
-                <a
-                    href="{{ url_for('unsupervised_page') }}"
-                    class="menu-item"
-                >
-                    🔵 Unsupervised Learning
-                </a>
-
-            </li>
-
-        </ul>
-
-    </aside>
+    {% include '_sidebar.html' %}
 
 
     <!-- ========================================================
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content">
+    <main id="main-content" tabindex="-1" class="content">
 
 
         <h1>
-            🌳 Tree Based Models
+             Tree Based Models
         </h1>
 
 
         <p>
-            V5 — Tree based classification algorithms
+            Tree based classification algorithms
             for predicting PolicyPulse customer response.
         </p>
 
@@ -201,7 +89,7 @@
 
 
             <p>
-                Choose one of the seven tree based
+                Choose one of the available tree based
                 classification algorithms.
             </p>
 
@@ -228,7 +116,8 @@
                     >
 
 
-                        <option
+                        <option value="id3" {% if selected_algorithm == 'id3' %}selected{% endif %}>Decision Tree (Entropy / ID3-style)</option>
+                    <option
                             value="decision_tree"
 
                             {% if selected_algorithm
@@ -585,6 +474,18 @@
         </div>
 
 
+
+        <div class="section-card">
+            <h2>Feature Importance</h2>
+            <p>The largest impurity-based importances in this fitted model. These describe model behavior and do not establish causation.</p>
+            <div class="table-wrapper"><table class="data-table">
+                <thead><tr><th>Feature</th><th>Importance</th></tr></thead><tbody>
+                {% for index in result.model.feature_importances_.argsort()[::-1][:15] %}
+                <tr><td>{{ model_feature_names()[index] }}</td><td>{{ "%.4f"|format(result.model.feature_importances_[index]) }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table></div>
+        </div>
         {% endif %}
 
 
@@ -593,6 +494,7 @@
 </div>
 
 
+<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
 </body>
 
 </html>

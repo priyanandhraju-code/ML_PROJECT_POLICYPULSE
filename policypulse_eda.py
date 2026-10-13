@@ -21,17 +21,16 @@ import seaborn as sns
 # DATASET PATH
 # ============================================================
 
-CSV_PATH = r"Policypulse.csv"
+from project_runtime import DATA_PATH, PLOT_DIR as PROJECT_PLOT_DIR, cached_analysis, atomic_output
+
+CSV_PATH = DATA_PATH
 
 
 # ============================================================
 # PLOT DIRECTORY
 # ============================================================
 
-PLOT_DIR = os.path.join(
-    "static",
-    "plots"
-)
+PLOT_DIR = PROJECT_PLOT_DIR
 
 os.makedirs(
     PLOT_DIR,
@@ -77,11 +76,8 @@ def show(
         filename
     )
 
-    plt.savefig(
-        filepath,
-        dpi=120,
-        bbox_inches="tight"
-    )
+    with atomic_output(filepath) as temporary:
+        plt.savefig(temporary, dpi=120, bbox_inches="tight")
 
     plt.close("all")
 
@@ -92,6 +88,7 @@ def show(
 # RUN EDA
 # ============================================================
 
+@cached_analysis
 def run_eda():
 
     # ========================================================
@@ -1409,18 +1406,8 @@ def run_eda():
         )
 
 
-        pair_grid.savefig(
-
-            os.path.join(
-                PLOT_DIR,
-                "pairplot.png"
-            ),
-
-            dpi=120,
-
-            bbox_inches="tight"
-
-        )
+        with atomic_output(os.path.join(PLOT_DIR, "pairplot.png")) as temporary:
+            pair_grid.savefig(temporary, dpi=120, bbox_inches="tight")
 
 
         plt.close("all")

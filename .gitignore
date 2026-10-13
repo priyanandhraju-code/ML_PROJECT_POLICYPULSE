@@ -1,1 +1,7 @@
 preprocessed_data.csv
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.analysis-cache/
+.reference/

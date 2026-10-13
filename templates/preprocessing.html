@@ -12,475 +12,22 @@
 
     <title>PolicyPulse - Preprocessing</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=10"
-    >
+    {% include '_ui_head.html' %}
 
-    <style>
 
-        /* =========================================================
-           PREPROCESSING PAGE
-           ========================================================= */
-
-        .preprocessing-page {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .preprocessing-page *,
-        .preprocessing-page *::before,
-        .preprocessing-page *::after {
-            box-sizing: border-box;
-        }
-
-
-        /* =========================================================
-           HEADER
-           ========================================================= */
-
-        .preprocessing-header {
-            margin-bottom: 25px;
-        }
-
-        .preprocessing-header h2 {
-            margin-bottom: 8px;
-        }
-
-        .preprocessing-header p {
-            margin-top: 0;
-        }
-
-
-        /* =========================================================
-           GENERAL SECTION
-           ========================================================= */
-
-        .prep-section {
-            width: 100%;
-            margin-bottom: 30px;
-        }
-
-        .prep-section-title {
-            margin-bottom: 15px;
-        }
-
-        .prep-section-title h2 {
-            margin-bottom: 5px;
-        }
-
-        .prep-section-title p {
-            margin-top: 0;
-            color: #666;
-        }
-
-
-        /* =========================================================
-           SUMMARY CARDS
-           ========================================================= */
-
-        .prep-card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 18px;
-            width: 100%;
-        }
-
-        .prep-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e8e8e8;
-            min-width: 0;
-        }
-
-        .prep-card h3 {
-            margin: 0 0 12px 0;
-            font-size: 17px;
-        }
-
-        .prep-card .big-value {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 0 0 6px 0;
-        }
-
-        .prep-card .small-label {
-            color: #777;
-            font-size: 14px;
-        }
-
-
-        /* =========================================================
-           PROCESS STEPS
-           ========================================================= */
-
-        .process-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .process-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            border: 1px solid #e5e5e5;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
-        }
-
-        .process-card h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        .process-card p {
-            line-height: 1.6;
-            margin-bottom: 0;
-        }
-
-
-        /* =========================================================
-           IQR SECTION
-           ========================================================= */
-
-        .iqr-container {
-            background: white;
-            border-radius: 14px;
-            padding: 25px;
-            border: 1px solid #e2e2e2;
-            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.08);
-        }
-
-        .iqr-introduction {
-            background: #f7f9fc;
-            border-left: 5px solid #333;
-            padding: 16px 18px;
-            border-radius: 8px;
-            margin-bottom: 22px;
-            line-height: 1.65;
-        }
-
-        .formula-box {
-            background: #f5f5f5;
-            border-radius: 10px;
-            padding: 18px;
-            margin: 18px 0 25px 0;
-            font-size: 16px;
-            line-height: 1.9;
-        }
-
-        .formula-box strong {
-            font-size: 17px;
-        }
-
-        .iqr-table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        .iqr-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-
-        .iqr-table th,
-        .iqr-table td {
-            padding: 14px 16px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-
-        .iqr-table th {
-            background: #f3f4f6;
-            font-weight: 700;
-        }
-
-        .iqr-table td.value {
-            font-weight: 700;
-        }
-
-        .fence-row td {
-            font-weight: 700;
-        }
-
-
-        /* =========================================================
-           OUTLIER COUNTS
-           ========================================================= */
-
-        .outlier-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-            margin-top: 25px;
-        }
-
-        .outlier-card {
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            background: #fafafa;
-        }
-
-        .outlier-card h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        .outlier-number {
-            font-size: 30px;
-            font-weight: 700;
-            margin: 0;
-        }
-
-
-        /* =========================================================
-           OUTLIER TREATMENT
-           ========================================================= */
-
-        .treatment-box {
-            margin-top: 25px;
-            padding: 20px;
-            border-radius: 12px;
-            background: #f7f7f7;
-            border: 1px solid #ddd;
-        }
-
-        .treatment-box h3 {
-            margin-top: 0;
-        }
-
-        .treatment-box p {
-            line-height: 1.7;
-        }
-
-        .treatment-formula {
-            font-family: monospace;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 14px;
-            border-radius: 8px;
-            margin-top: 15px;
-        }
-
-
-        /* =========================================================
-           BEFORE / AFTER TABLE
-           ========================================================= */
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 20px;
-        }
-
-        .stats-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            border: 1px solid #ddd;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .stats-card h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-        }
-
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .stats-table th,
-        .stats-table td {
-            border: 1px solid #ddd;
-            padding: 11px 13px;
-            text-align: left;
-        }
-
-        .stats-table th {
-            background: #f3f4f6;
-        }
-
-
-        /* =========================================================
-           FEATURE TRANSFORMATION
-           ========================================================= */
-
-        .table-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-            overflow-x: auto;
-        }
-
-        .feature-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 650px;
-        }
-
-        .feature-table th,
-        .feature-table td {
-            border: 1px solid #ddd;
-            padding: 13px 15px;
-            text-align: left;
-        }
-
-        .feature-table th {
-            background: #f3f4f6;
-        }
-
-
-        /* =========================================================
-           SCALING
-           ========================================================= */
-
-        .scaling-box {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            border: 1px solid #ddd;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .feature-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .feature-tag {
-            padding: 9px 14px;
-            border-radius: 20px;
-            background: #f1f1f1;
-            border: 1px solid #ddd;
-            font-weight: 600;
-        }
-
-        .scaling-formula {
-            background: #f7f7f7;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            margin-top: 15px;
-        }
-
-
-        /* =========================================================
-           FINAL DATASET
-           ========================================================= */
-
-        .final-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-
-        /* =========================================================
-           NEXT STAGE
-           ========================================================= */
-
-        .next-stage-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 20px;
-        }
-
-        .next-stage-card {
-            display: block;
-            text-decoration: none;
-            color: inherit;
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .next-stage-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
-        }
-
-        .next-stage-card h3 {
-            margin-top: 0;
-        }
-
-        .next-stage-card p {
-            line-height: 1.6;
-        }
-
-
-        /* =========================================================
-           RESPONSIVE
-           ========================================================= */
-
-        @media (max-width: 1000px) {
-
-            .prep-card-grid,
-            .final-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-
-            .process-grid,
-            .stats-grid,
-            .outlier-grid,
-            .next-stage-grid {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-        @media (max-width: 650px) {
-
-            .prep-card-grid,
-            .final-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .iqr-container,
-            .prep-card,
-            .process-card,
-            .stats-card,
-            .scaling-box {
-                padding: 16px;
-            }
-
-        }
-
-    </style>
 
 </head>
 
 
-<body>
+<body data-page="{{ active|default('none') }}">
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 
 <!-- ============================================================
      TOP BAR
      ============================================================ -->
 
-<header class="topbar">
-
-    <h1>
-        PolicyPulse
-    </h1>
-
-    <p>
-        Vehicle Insurance Response Analysis
-    </p>
-
-</header>
+{% include '_topbar.html' %}
 
 
 <!-- ============================================================
@@ -494,163 +41,14 @@
          SIDEBAR
          ======================================================== -->
 
-    <aside class="sidebar">
-
-        <ul>
-
-            <!-- HOME -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('index') }}"
-                    class="menu-item
-                    {% if active == 'none' %}
-                    active
-                    {% endif %}"
-                >
-
-                    🏠 Home
-
-                </a>
-
-            </li>
-
-
-            <!-- DATA LOADING -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('data_loading') }}"
-                    class="menu-item
-                    {% if active == 'data-loading' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📂 Data Loading
-
-                </a>
-
-            </li>
-
-
-            <!-- EDA -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('eda_page') }}"
-                    class="menu-item
-                    {% if active == 'eda' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📊 EDA
-
-                </a>
-
-            </li>
-
-
-            <!-- PREPROCESSING -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('preprocessing_page') }}"
-                    class="menu-item
-                    {% if active == 'preprocessing' %}
-                    active
-                    {% endif %}"
-                >
-
-                    ⚙️ Preprocessing
-
-                </a>
-
-            </li>
-
-
-            <!-- LINEAR REGRESSION -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('linear_regression_page') }}"
-                    class="menu-item
-                    {% if active == 'linear-regression' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📈 Linear Regression
-
-                </a>
-
-            </li>
-
-
-            <!-- LOGISTIC REGRESSION -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('logistic_regression_page') }}"
-                    class="menu-item
-                    {% if active == 'logistic-regression' %}
-                    active
-                    {% endif %}"
-                >
-
-                    🔢 Logistic Regression
-
-                </a>
-
-            </li>
-
-
-            <!-- TREE BASED MODELS -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('tree_based_page') }}"
-                    class="menu-item
-                    {% if active == 'tree-based' %}
-                    active
-                    {% endif %}"
-                >
-
-                    🌳 Tree Based Models
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a
-                    href="{{ url_for('unsupervised_page') }}"
-                    class="menu-item"
-                >
-                    🔵 Unsupervised Learning
-                </a>
-
-            </li>
-
-        </ul>
-
-    </aside>
+    {% include '_sidebar.html' %}
 
 
     <!-- ========================================================
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content preprocessing-page">
+    <main id="main-content" tabindex="-1" class="content preprocessing-page">
 
 
         <!-- ====================================================
@@ -660,7 +58,7 @@
         <div class="preprocessing-header">
 
             <h2>
-                ⚙️ Data Preprocessing
+                 Data Preprocessing
             </h2>
 
             <p>
@@ -695,7 +93,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    ✅ Preprocessing Completed
+                     Preprocessing Completed
                 </h2>
 
                 <p>
@@ -716,7 +114,7 @@
                     </h3>
 
                     <p class="big-value">
-                        381,109
+                        {{ "{:,}".format(prep.original_rows) }}
                     </p>
 
                     <span class="small-label">
@@ -791,7 +189,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    🔄 Preprocessing Pipeline
+                     Preprocessing Pipeline
                 </h2>
 
                 <p>
@@ -822,13 +220,12 @@
                 <div class="process-card">
 
                     <h3>
-                        2. Missing Value Handling
+                        2. Train-Test Split
                     </h3>
 
                     <p>
-                        Missing values were checked and handled.
-                        The final preprocessing result contains
-                        <strong>0 missing values</strong>.
+                        The dataset was split 80:20 before learning medians, categories,
+                        IQR fences and scaling parameters from training rows only.
                     </p>
 
                 </div>
@@ -837,14 +234,12 @@
                 <div class="process-card">
 
                     <h3>
-                        3. Categorical Encoding
+                        3. Missing Value Handling
                     </h3>
 
                     <p>
-                        Categorical variables including
-                        Gender, Vehicle_Age, Vehicle_Damage,
-                        Region_Code and Policy_Sales_Channel
-                        were converted into numerical features.
+                        The training medians and modes are used to replace missing
+                        predictor values in both splits. The result contains <strong>0 missing values</strong>.
                     </p>
 
                 </div>
@@ -853,12 +248,12 @@
                 <div class="process-card">
 
                     <h3>
-                        4. Train-Test Split
+                        4. Categorical Encoding
                     </h3>
 
                     <p>
-                        The dataset was divided into training and testing
-                        sets using an <strong>80:20 split</strong>.
+                        Gender, Vehicle_Age, Vehicle_Damage, Region_Code and
+                        Policy_Sales_Channel use training categories; unseen test categories are handled safely.
                     </p>
 
                 </div>
@@ -907,7 +302,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    📊 IQR Outlier Analysis
+                     IQR Outlier Analysis
                 </h2>
 
                 <p>
@@ -1006,7 +401,7 @@
                             </td>
 
                             <td class="value">
-                                24,403
+                                {{ "{:,.2f}".format(prep.q1) }}
                             </td>
 
                         </tr>
@@ -1023,7 +418,7 @@
                             </td>
 
                             <td class="value">
-                                39,443
+                                {{ "{:,.2f}".format(prep.q3) }}
                             </td>
 
                         </tr>
@@ -1036,11 +431,11 @@
                             </td>
 
                             <td>
-                                39,443 − 24,403
+                                {{ "{:,.2f}".format(prep.q3) }} − {{ "{:,.2f}".format(prep.q1) }}
                             </td>
 
                             <td class="value">
-                                15,040
+                                {{ "{:,.2f}".format(prep.iqr) }}
                             </td>
 
                         </tr>
@@ -1053,11 +448,11 @@
                             </td>
 
                             <td>
-                                24,403 − (1.5 × 15,040)
+                                {{ "{:,.2f}".format(prep.q1) }} − (1.5 × {{ "{:,.2f}".format(prep.iqr) }})
                             </td>
 
                             <td class="value">
-                                1,843
+                                {{ "{:,.2f}".format(prep.lower) }}
                             </td>
 
                         </tr>
@@ -1070,11 +465,11 @@
                             </td>
 
                             <td>
-                                39,443 + (1.5 × 15,040)
+                                {{ "{:,.2f}".format(prep.q3) }} + (1.5 × {{ "{:,.2f}".format(prep.iqr) }})
                             </td>
 
                             <td class="value">
-                                62,003
+                                {{ "{:,.2f}".format(prep.upper) }}
                             </td>
 
                         </tr>
@@ -1099,7 +494,7 @@
                         </h3>
 
                         <p class="outlier-number">
-                            8,280
+                            {{ "{:,}".format(prep.training_outliers) }}
                         </p>
 
                         <p>
@@ -1117,7 +512,7 @@
                         </h3>
 
                         <p class="outlier-number">
-                            1,940
+                            {{ "{:,}".format(prep.testing_outliers) }}
                         </p>
 
                         <p>
@@ -1136,7 +531,7 @@
                 <div class="treatment-box">
 
                     <h3>
-                        🛠️ Outlier Treatment
+                         Outlier Treatment
                     </h3>
 
                     <p>
@@ -1147,27 +542,27 @@
 
                     <p>
                         Therefore, values above
-                        <strong>62,003</strong> were replaced by
-                        <strong>62,003</strong>.
+                        <strong>{{ "{:,.2f}".format(prep.upper) }}</strong> were replaced by
+                        <strong>{{ "{:,.2f}".format(prep.upper) }}</strong>.
                     </p>
 
                     <p>
                         Values below the lower fence would be clipped
-                        to <strong>1,843</strong>.
+                        to <strong>{{ "{:,.2f}".format(prep.lower) }}</strong>.
                     </p>
 
                     <div class="treatment-formula">
 
-                        Lower Limit = 1,843
+                        Lower Limit = {{ "{:,.2f}".format(prep.lower) }}
 
                         <br>
 
-                        Upper Limit = 62,003
+                        Upper Limit = {{ "{:,.2f}".format(prep.upper) }}
 
                         <br><br>
 
                         Annual_Premium =
-                        clip(Annual_Premium, 1,843, 62,003)
+                        clip(Annual_Premium, {{ "{:,.2f}".format(prep.lower) }}, {{ "{:,.2f}".format(prep.upper) }})
 
                     </div>
 
@@ -1188,7 +583,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    📈 Annual Premium Before & After Treatment
+                     Annual Premium Before & After Treatment
                 </h2>
 
                 <p>
@@ -1233,39 +628,7 @@
                         </thead>
 
 
-                        <tbody>
-
-                        <tr>
-                            <td>Minimum</td>
-                            <td>2,630</td>
-                            <td>2,630</td>
-                        </tr>
-
-                        <tr>
-                            <td>Q1</td>
-                            <td>24,403</td>
-                            <td>24,403</td>
-                        </tr>
-
-                        <tr>
-                            <td>Median</td>
-                            <td>31,697</td>
-                            <td>31,697</td>
-                        </tr>
-
-                        <tr>
-                            <td>Q3</td>
-                            <td>39,443</td>
-                            <td>39,443</td>
-                        </tr>
-
-                        <tr>
-                            <td>Maximum</td>
-                            <td>540,165</td>
-                            <td>62,003</td>
-                        </tr>
-
-                        </tbody>
+                        <tbody>{% for label, key in [("Minimum", "min"), ("Q1", "25%"), ("Median", "50%"), ("Q3", "75%"), ("Maximum", "max")] %}<tr><td>{{ label }}</td><td>{{ "{:,.2f}".format(prep.statistics.training.before[key]) }}</td><td>{{ "{:,.2f}".format(prep.statistics.training.after[key]) }}</td></tr>{% endfor %}</tbody>
 
                     </table>
 
@@ -1303,39 +666,7 @@
                         </thead>
 
 
-                        <tbody>
-
-                        <tr>
-                            <td>Minimum</td>
-                            <td>2,630</td>
-                            <td>2,630</td>
-                        </tr>
-
-                        <tr>
-                            <td>Q1</td>
-                            <td>24,419</td>
-                            <td>24,419</td>
-                        </tr>
-
-                        <tr>
-                            <td>Median</td>
-                            <td>31,559.5</td>
-                            <td>31,559.5</td>
-                        </tr>
-
-                        <tr>
-                            <td>Q3</td>
-                            <td>39,206</td>
-                            <td>39,206</td>
-                        </tr>
-
-                        <tr>
-                            <td>Maximum</td>
-                            <td>540,165</td>
-                            <td>62,003</td>
-                        </tr>
-
-                        </tbody>
+                        <tbody>{% for label, key in [("Minimum", "min"), ("Q1", "25%"), ("Median", "50%"), ("Q3", "75%"), ("Maximum", "max")] %}<tr><td>{{ label }}</td><td>{{ "{:,.2f}".format(prep.statistics.testing.before[key]) }}</td><td>{{ "{:,.2f}".format(prep.statistics.testing.after[key]) }}</td></tr>{% endfor %}</tbody>
 
                     </table>
 
@@ -1356,7 +687,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    🔄 Feature Transformation
+                     Feature Transformation
                 </h2>
 
                 <p>
@@ -1519,7 +850,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    📏 Standard Scaling
+                     Standard Scaling
                 </h2>
 
                 <p>
@@ -1584,7 +915,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    📦 Final Dataset Information
+                     Final Dataset Information
                 </h2>
 
             </div>
@@ -1659,7 +990,7 @@
             <div class="prep-section-title">
 
                 <h2>
-                    🚀 Next Modeling Stage
+                     Next Modeling Stage
                 </h2>
 
             </div>
@@ -1674,7 +1005,7 @@
                 >
 
                     <h3>
-                        📈 Linear Regression
+                         Linear Regression
                     </h3>
 
                     <p>
@@ -1691,7 +1022,7 @@
                 >
 
                     <h3>
-                        🔢 Logistic Regression
+                         Logistic Regression
                     </h3>
 
                     <p>
@@ -1708,7 +1039,7 @@
                 >
 
                     <h3>
-                        🌳 Tree Based Models
+                         Tree Based Models
                     </h3>
 
                     <p>
@@ -1734,6 +1065,7 @@
 </div>
 
 
+<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
 </body>
 
 </html>

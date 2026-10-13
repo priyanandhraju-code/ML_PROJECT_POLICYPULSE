@@ -1,0 +1,25 @@
+{% macro item(endpoint, key, label, icon) %}
+<li><a href="{{ url_for(endpoint) }}" class="menu-item {% if active == key %}active{% endif %}" {% if active == key %}aria-current="page"{% endif %}>
+    <svg class="nav-icon" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="{{ url_for('static', filename='icons.svg') }}#{{ icon }}"></use></svg>
+    <span>{{ label }}</span>
+</a></li>
+{% endmacro %}
+<aside class="sidebar"><nav aria-label="Project navigation"><ul>
+    <li class="menu-section-title">Data</li>
+    {{ item('index', 'none', 'Home', 'home') }}
+    {{ item('data_loading', 'data-loading', 'Data Loading', 'database') }}
+    {{ item('eda_page', 'eda', 'EDA', 'chart-bar') }}
+    {{ item('preprocessing_page', 'preprocessing', 'Preprocessing', 'adjustments-horizontal') }}
+    <li class="menu-section-title">Supervised learning</li>
+    {{ item('linear_regression_page', 'linear-regression', 'Linear Regression', 'chart-line') }}
+    {{ item('logistic_regression_page', 'logistic-regression', 'Logistic Regression', 'binary') }}
+    {{ item('tree_based_page', 'tree-based', 'Tree Based Models', 'hierarchy') }}
+    <li class="menu-section-title">Unsupervised learning</li>
+    {{ item('unsupervised_page', 'unsupervised', 'K-Means Clustering', 'circles') }}
+    {{ item('hierarchical_page', 'hierarchical', 'Hierarchical Clustering', 'sitemap') }}
+    {{ item('dbscan_page', 'dbscan', 'DBSCAN', 'focus-2') }}
+    <li class="menu-section-title">Evaluation</li>
+    {{ item('comparison_page', 'comparison', 'Model Comparison', 'chart-dots') }}
+    {{ item('best_model_page', 'best-model', 'Best Model', 'award') }}
+    {{ item('final_results_page', 'final-results', 'Final Results', 'report-analytics') }}
+</ul></nav></aside>

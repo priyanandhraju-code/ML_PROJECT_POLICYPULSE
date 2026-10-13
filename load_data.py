@@ -1,12 +1,13 @@
 import os
 import pandas as pd
+from project_runtime import DATA_PATH as PROJECT_DATA_PATH
 
 
 # ============================================================
 # DATASET PATH
 # ============================================================
 
-DATA_PATH = r"Policypulse.csv"
+DATA_PATH = PROJECT_DATA_PATH
 
 
 # ============================================================

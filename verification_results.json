@@ -1,0 +1,314 @@
+{
+  "checks": [
+    {
+      "path": "/",
+      "form": null,
+      "seconds": 0.68,
+      "plots": 0,
+      "status": "passed"
+    },
+    {
+      "path": "/data-loading",
+      "form": null,
+      "seconds": 0.83,
+      "plots": 0,
+      "status": "passed"
+    },
+    {
+      "path": "/eda",
+      "form": null,
+      "seconds": 20.25,
+      "plots": 18,
+      "status": "passed"
+    },
+    {
+      "path": "/preprocessing",
+      "form": null,
+      "seconds": 3.37,
+      "plots": 0,
+      "status": "passed"
+    },
+    {
+      "path": "/linear-regression",
+      "form": null,
+      "seconds": 31.61,
+      "plots": 7,
+      "status": "passed"
+    },
+    {
+      "path": "/logistic-regression",
+      "form": null,
+      "seconds": 79.65,
+      "plots": 13,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "decision_tree"
+      },
+      "seconds": 9.29,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "id3"
+      },
+      "seconds": 10.3,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "random_forest"
+      },
+      "seconds": 19.24,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "extra_trees"
+      },
+      "seconds": 17.26,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "gradient_boosting"
+      },
+      "seconds": 72.26,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "adaboost"
+      },
+      "seconds": 32.52,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "xgboost"
+      },
+      "seconds": 5.59,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/tree-based",
+      "form": {
+        "algorithm": "lightgbm"
+      },
+      "seconds": 4.67,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/unsupervised",
+      "form": {
+        "method": "manual",
+        "k": "3"
+      },
+      "seconds": 4.14,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/unsupervised",
+      "form": {
+        "method": "elbow",
+        "k": "3"
+      },
+      "seconds": 5.5,
+      "plots": 3,
+      "status": "passed"
+    },
+    {
+      "path": "/unsupervised",
+      "form": {
+        "method": "silhouette",
+        "k": "3"
+      },
+      "seconds": 6.71,
+      "plots": 3,
+      "status": "passed"
+    },
+    {
+      "path": "/hierarchical",
+      "form": {
+        "k": "3",
+        "linkage": "ward"
+      },
+      "seconds": 2.28,
+      "plots": 3,
+      "status": "passed"
+    },
+    {
+      "path": "/dbscan",
+      "form": {
+        "eps": "0.8",
+        "min_samples": "10"
+      },
+      "seconds": 1.77,
+      "plots": 2,
+      "status": "passed"
+    },
+    {
+      "path": "/model-comparison",
+      "form": {},
+      "seconds": 0.02,
+      "plots": 0,
+      "status": "passed"
+    }
+  ],
+  "dataset": "Policypulse.csv",
+  "classification": [
+    {
+      "Model": "LightGBM",
+      "Accuracy": 0.7042717325706489,
+      "Precision": 0.283970015385119,
+      "Recall": 0.9286020124170413,
+      "F1 Score": 0.43493519841568273,
+      "ROC AUC": 0.8575083208363935,
+      "PR AUC": 0.3685768628295566
+    },
+    {
+      "Model": "XGBoost",
+      "Accuracy": 0.704206134711763,
+      "Precision": 0.2837111780893723,
+      "Recall": 0.9269963605223721,
+      "F1 Score": 0.43445542567601464,
+      "ROC AUC": 0.8575184778010303,
+      "PR AUC": 0.36813624210322615
+    },
+    {
+      "Model": "Gradient Boosting",
+      "Accuracy": 0.696727978798772,
+      "Precision": 0.2792911165235226,
+      "Recall": 0.9328837508028259,
+      "F1 Score": 0.42988210920929315,
+      "ROC AUC": 0.8556309613347757,
+      "PR AUC": 0.3621791149220519
+    },
+    {
+      "Model": "Random Forest",
+      "Accuracy": 0.7030516123953714,
+      "Precision": 0.28218405873099106,
+      "Recall": 0.9216441875401413,
+      "F1 Score": 0.43207708134691625,
+      "ROC AUC": 0.8519787090750831,
+      "PR AUC": 0.353049024498907
+    },
+    {
+      "Model": "Extra Trees",
+      "Accuracy": 0.7020282857967516,
+      "Precision": 0.2816358528777683,
+      "Recall": 0.9229287090558767,
+      "F1 Score": 0.43157473220542597,
+      "ROC AUC": 0.8498429063605325,
+      "PR AUC": 0.3498139976721265
+    },
+    {
+      "Model": "Decision Tree (Gini)",
+      "Accuracy": 0.7044816457190838,
+      "Precision": 0.2825089913221368,
+      "Recall": 0.9165061014771998,
+      "F1 Score": 0.43188983328709424,
+      "ROC AUC": 0.8442095498323157,
+      "PR AUC": 0.3469080208478864
+    },
+    {
+      "Model": "Decision Tree (Entropy / ID3-style)",
+      "Accuracy": 0.7012279919183438,
+      "Precision": 0.28093296362746695,
+      "Recall": 0.9218582744594306,
+      "F1 Score": 0.4306322974223067,
+      "ROC AUC": 0.8459713974690113,
+      "PR AUC": 0.3454567135937856
+    },
+    {
+      "Model": "Logistic Regression",
+      "Accuracy": 0.6962163154994621,
+      "Precision": 0.27919690527190766,
+      "Recall": 0.934810533076429,
+      "F1 Score": 0.42997464365722166,
+      "ROC AUC": 0.8497209779700463,
+      "PR AUC": 0.3378409997512758
+    },
+    {
+      "Model": "Ridge Logistic Regression (L2)",
+      "Accuracy": 0.6960720002099131,
+      "Precision": 0.27912698919920753,
+      "Recall": 0.9350246199957183,
+      "F1 Score": 0.42991436164976865,
+      "ROC AUC": 0.8497748182053779,
+      "PR AUC": 0.33743214264376536
+    },
+    {
+      "Model": "Lasso Logistic Regression (L1)",
+      "Accuracy": 0.6950355540395161,
+      "Precision": 0.27870626810556137,
+      "Recall": 0.9371654891886105,
+      "F1 Score": 0.4296405349036928,
+      "ROC AUC": 0.8497770613484505,
+      "PR AUC": 0.33689990907676853
+    },
+    {
+      "Model": "AdaBoost",
+      "Accuracy": 0.6567526435937131,
+      "Precision": 0.25923911487705037,
+      "Recall": 0.9693855705416399,
+      "F1 Score": 0.4090796160361378,
+      "ROC AUC": 0.8412310575650532,
+      "PR AUC": 0.31555890748638477
+    }
+  ],
+  "regression": [
+    {
+      "Category": "Without Regularization",
+      "Model": "Linear Regression",
+      "MAE": 9878.038614503157,
+      "MSE": 219531951.4760312,
+      "RMSE": 14816.610660877583,
+      "R2 Score": 0.24991777669983184
+    },
+    {
+      "Category": "With Regularization",
+      "Model": "Ridge Regression (L2)",
+      "MAE": 9890.770790148472,
+      "MSE": 219838014.09176353,
+      "RMSE": 14826.935424819369,
+      "R2 Score": 0.2488720422373356
+    },
+    {
+      "Category": "With Regularization",
+      "Model": "Lasso Regression (L1)",
+      "MAE": 9990.46548678456,
+      "MSE": 221387785.94842926,
+      "RMSE": 14879.105683757653,
+      "R2 Score": 0.2435768844617131
+    }
+  ],
+  "best_observed": {
+    "Model": "LightGBM",
+    "Accuracy": 0.7042717325706489,
+    "Precision": 0.283970015385119,
+    "Recall": 0.9286020124170413,
+    "F1 Score": 0.43493519841568273,
+    "ROC AUC": 0.8575083208363935,
+    "PR AUC": 0.3685768628295566
+  },
+  "training_rows": 304887,
+  "testing_rows": 76222
+}

@@ -1,65 +1,8 @@
-from sklearn.metrics import silhouette_score
+"""Compatibility helper for the original standalone clustering script."""
+from unsupervised import calculate_kmeans_performance
 
 
-# ============================================================
-# Calculate Performance
-# ============================================================
-
-def calculate_performance(
-    X,
-    clusters,
-    kmeans_model
-):
-
-    # ========================================================
-    # WCSS
-    # ========================================================
-
-    wcss = kmeans_model.inertia_
-
-    # ========================================================
-    # Silhouette Score
-    # ========================================================
-
-    sample_size = min(
-        5000,
-        len(X)
-    )
-
-    silhouette = silhouette_score(
-        X,
-        clusters,
-        sample_size=sample_size,
-        random_state=42
-    )
-
-    # ========================================================
-    # Display Results
-    # ========================================================
-
-    print(
-        "\n================================"
-    )
-
-    print(
-        "     K-MEANS PERFORMANCE"
-    )
-
-    print(
-        "================================"
-    )
-
-    print(
-        "WCSS =",
-        wcss
-    )
-
-    print(
-        "Silhouette Score =",
-        silhouette
-    )
-
-    return (
-        wcss,
-        silhouette
-    )
+def calculate_performance(X, clusters, kmeans_model):
+    wcss, score = calculate_kmeans_performance(X, clusters, kmeans_model)
+    print("WCSS:", wcss, "Silhouette:", score)
+    return wcss, score

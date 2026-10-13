@@ -10,35 +10,24 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>PolicyPulse</title>
+    <title>
+        PolicyPulse
+    </title>
 
-    <!-- Cache-busting version -->
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=7"
-    >
+    {% include '_ui_head.html' %}
 
 </head>
 
 
-<body>
+<body data-page="{{ active|default('none') }}">
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 
 <!-- ============================================================
      TOP BAR
      ============================================================ -->
 
-<header class="topbar">
-
-    <h1>
-        PolicyPulse
-    </h1>
-
-    <p>
-        Vehicle Insurance Response Analysis
-    </p>
-
-</header>
+{% include '_topbar.html' %}
 
 
 <!-- ============================================================
@@ -52,412 +41,348 @@
          SIDEBAR
          ======================================================== -->
 
-    <aside class="sidebar">
-
-        <ul>
-
-
-            <!-- =================================================
-                 HOME
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="/"
-                    class="menu-item
-                    {% if active == 'none' %}
-                    active
-                    {% endif %}"
-                >
-
-                    🏠 Home
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 DATA LOADING
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="/data-loading"
-                    class="menu-item
-                    {% if active == 'data-loading' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📂 Data Loading
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 EDA
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="/eda"
-                    class="menu-item
-                    {% if active == 'eda' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📊 EDA
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 PREPROCESSING
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('preprocessing_page') }}"
-                    class="menu-item
-                    {% if active == 'preprocessing' %}
-                    active
-                    {% endif %}"
-                >
-
-                    ⚙️ Preprocessing
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 LINEAR REGRESSION
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('linear_regression_page') }}"
-                    class="menu-item
-                    {% if active == 'linear-regression' %}
-                    active
-                    {% endif %}"
-                >
-
-                    📈 Linear Regression
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 LOGISTIC REGRESSION
-                 ================================================= -->
-
-            <li>
-
-                <a
-                    href="{{ url_for('logistic_regression_page') }}"
-                    class="menu-item
-                    {% if active == 'logistic-regression' %}
-                    active
-                    {% endif %}"
-                >
-
-                    🔢 Logistic Regression
-
-                </a>
-
-            </li>
-
-
-            <!-- =================================================
-                 TREE BASED MODELS
-                 ================================================= -->
-
-            <li>
-
-    <a
-        href="{{ url_for('tree_based_page') }}"
-        class="menu-item
-        {% if active == 'tree-based' %}
-            active
-        {% endif %}"
-    >
-
-        🌳 Tree Based Models
-
-    </a>
-
-</li>
-
-            <li>
-
-                <a
-                    href="{{ url_for('unsupervised_page') }}"
-                    class="menu-item"
-                >
-                    🔵 Unsupervised Learning
-                </a>
-
-            </li>
-
-
-        </ul>
-
-    </aside>
+    {% include '_sidebar.html' %}
 
 
     <!-- ========================================================
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content">
+    <main id="main-content" tabindex="-1" class="content">
+        {% if active == 'none' and error %}<div class="error">{{ error }}</div>{% endif %}
 
-
-        <!-- =====================================================
-             HOME
-             ===================================================== -->
 
         {% if active == 'none' %}
 
+        <!-- ====================================================
+             WELCOME
+             ==================================================== -->
 
         <div class="welcome-card">
 
-
             <h2>
-                🏠 Welcome to PolicyPulse
+                 Welcome to PolicyPulse
             </h2>
 
-
             <p>
-
                 PolicyPulse is a machine learning project that
                 analyzes vehicle insurance customer data and
                 predicts whether a customer will respond to an
                 insurance offer.
-
             </p>
-
-
-            <!-- =================================================
-                 PROJECT OVERVIEW
-                 ================================================= -->
-
-            <h3>
-                Project Overview
-            </h3>
-
-
-            <ul>
-
-                <li>
-
-                    <strong>Dataset:</strong>
-                    Vehicle Insurance Prediction Dataset
-
-                </li>
-
-                <li>
-
-                    <strong>Total Records:</strong>
-                    381,109
-
-                </li>
-
-                <li>
-
-                    <strong>Total Columns:</strong>
-                    12
-
-                </li>
-
-                <li>
-
-                    <strong>Target Variable:</strong>
-                    Response
-
-                </li>
-
-                <li>
-
-                    <strong>Problem Type:</strong>
-                    Binary Classification
-
-                </li>
-
-            </ul>
-
-
-            <!-- =================================================
-                 DATASET FEATURES
-                 ================================================= -->
-
-            <h3>
-                Dataset Features
-            </h3>
-
-
-            <ul>
-
-                <li>Gender</li>
-
-                <li>Age</li>
-
-                <li>Driving License</li>
-
-                <li>Region Code</li>
-
-                <li>Previously Insured</li>
-
-                <li>Vehicle Age</li>
-
-                <li>Vehicle Damage</li>
-
-                <li>Annual Premium</li>
-
-                <li>Policy Sales Channel</li>
-
-                <li>Vintage</li>
-
-                <li>Response</li>
-
-            </ul>
-
-
-            <!-- =================================================
-                 MACHINE LEARNING WORKFLOW
-                 ================================================= -->
-
-            <h3>
-                Machine Learning Workflow
-            </h3>
-
-
-            <ol>
-
-                <li>
-
-                    <strong>
-                        Data Loading
-                    </strong>
-
-                    – Load the original PolicyPulse dataset.
-
-                </li>
-
-
-                <li>
-
-                    <strong>
-                        Exploratory Data Analysis
-                    </strong>
-
-                    – Explore distributions, relationships,
-                    correlations and response patterns.
-
-                </li>
-
-
-                <li>
-
-                    <strong>
-                        Data Preprocessing
-                    </strong>
-
-                    – Clean, encode, handle outliers,
-                    split and scale the dataset.
-
-                </li>
-
-
-                <li>
-
-                    <strong>
-                        Linear Regression
-                    </strong>
-
-                    – Apply Linear Regression without
-                    regularization and regularized models
-                    using Ridge and Lasso.
-
-                </li>
-
-
-                <li>
-
-                    <strong>
-                        Logistic Regression
-                    </strong>
-
-                    – Apply Logistic Regression without
-                    regularization and regularized models
-                    using Ridge and Lasso.
-
-                </li>
-
-
-                <li>
-
-                    <strong>
-                        Tree Based Models
-                    </strong>
-
-                    – Apply tree-based machine learning
-                    algorithms.
-
-                </li>
-
-            </ol>
-
-
-            <!-- =================================================
-                 PROJECT OBJECTIVE
-                 ================================================= -->
-
-            <h3>
-                Project Objective
-            </h3>
-
-
-            <p>
-
-                The objective of PolicyPulse is to analyze
-                customer and vehicle-related factors and
-                build machine learning models that can
-                predict customer response to an insurance
-                offer.
-
-            </p>
-
 
         </div>
 
 
+        <!-- ====================================================
+             PROJECT OVERVIEW
+             ==================================================== -->
+
+        <div class="section-card dataset-overview">
+
+            <h2>
+                 Project Overview
+            </h2>
+
+            <div class="result-grid">
+
+                <div class="card">
+
+                    <h3>
+                        Dataset
+                    </h3>
+
+                    <p>
+                        Vehicle Insurance Prediction Dataset
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Records
+                    </h3>
+
+                    <p>
+                        {{ "{:,}".format(dataset_rows) }}
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Columns
+                    </h3>
+
+                    <p>
+                        {{ dataset_columns }}
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Target
+                    </h3>
+
+                    <p>
+                        Response
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             PROJECT WORKFLOW
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                 Machine Learning Workflow
+            </h2>
+
+            <div class="workflow">
+
+                <div class="workflow-step">
+                    <span>1</span>
+                    <p>Data Loading</p>
+                </div>
+
+                <div class="workflow-arrow">
+                    ↓
+                </div>
+
+                <div class="workflow-step">
+                    <span>2</span>
+                    <p>EDA</p>
+                </div>
+
+                <div class="workflow-arrow">
+                    ↓
+                </div>
+
+                <div class="workflow-step">
+                    <span>3</span>
+                    <p>Preprocessing</p>
+                </div>
+
+                <div class="workflow-arrow">
+                    ↓
+                </div>
+
+                <div class="workflow-step">
+                    <span>4</span>
+                    <p>Supervised Learning</p>
+                </div>
+
+                <div class="workflow-arrow">
+                    ↓
+                </div>
+
+                <div class="workflow-step">
+                    <span>5</span>
+                    <p>Unsupervised Learning</p>
+                </div>
+
+                <div class="workflow-arrow">
+                    ↓
+                </div>
+
+                <div class="workflow-step">
+                    <span>6</span>
+                    <p>Evaluation</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             SUPERVISED LEARNING
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                 Supervised Learning
+            </h2>
+
+            <div class="result-grid">
+
+                <div class="card">
+
+                    <h3>
+                         Linear Regression
+                    </h3>
+
+                    <p>
+                        Predictive regression models with
+                        regularization and without regularization.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                         Logistic Regression
+                    </h3>
+
+                    <p>
+                        Binary classification for predicting
+                        customer response.
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                         Tree Based Models
+                    </h3>
+
+                    <p>
+                        Decision Tree, Random Forest,
+                        Extra Trees and other tree algorithms.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             UNSUPERVISED LEARNING
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                 Unsupervised Learning
+            </h2>
+
+            <div class="result-grid">
+
+                <div class="card">
+
+                    <h3>
+                        K-Means Clustering
+                    </h3>
+
+                    <p>
+                        Customer data is grouped into clusters
+                        using K-Means clustering.
+                    </p>
+
+                    <p>
+                        <a href="{{ url_for('unsupervised_page') }}">Explore K selection</a>
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Hierarchical Clustering
+                    </h3>
+
+                    <p><a href="{{ url_for('hierarchical_page') }}">Open Hierarchical Clustering</a></p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        DBSCAN
+                    </h3>
+
+                    <p><a href="{{ url_for('dbscan_page') }}">Open DBSCAN</a></p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================================
+             EVALUATION
+             ==================================================== -->
+
+        <div class="section-card">
+
+            <h2>
+                 Evaluation
+            </h2>
+
+            <p>
+                Model comparison, best-model selection and
+                final project results are available from the links below.
+            </p>
+
+            <div class="result-grid">
+
+                <div class="card">
+
+                    <h3>
+                        Model Comparison
+                    </h3>
+
+                    <p><a href="{{ url_for('comparison_page') }}">Open Model Comparison</a></p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Best Model
+                    </h3>
+
+                    <p><a href="{{ url_for('best_model_page') }}">Open Best Model</a></p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        Final Results
+                    </h3>
+
+                    <p><a href="{{ url_for('final_results_page') }}">Open Final Results</a></p>
+
+                </div>
+
+            </div>
+
+        </div>
+
         {% endif %}
-
-
-        <!-- =====================================================
-             DATA LOADING
-             ===================================================== -->
 
         {% if active == 'data-loading' %}
 
 
         <h2>
-            📂 Data Loading
+             Data Loading
         </h2>
 
 
@@ -667,7 +592,7 @@
 
 
         <h2>
-            📊 Exploratory Data Analysis
+             Exploratory Data Analysis
         </h2>
 
 
@@ -874,7 +799,7 @@
              EDA VISUALIZATIONS
              ================================================= -->
 
-        <div class="section-card">
+        <div class="section-card eda-plots">
 
             <h3>
                 EDA Visualizations
@@ -923,11 +848,7 @@
 
 
     </main>
-
-
 </div>
-
-
+<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
 </body>
-
 </html>

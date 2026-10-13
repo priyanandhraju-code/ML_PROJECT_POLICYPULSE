@@ -10,354 +10,22 @@
 
     <title>PolicyPulse - Logistic Regression</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}?v=10"
-    >
+    {% include '_ui_head.html' %}
 
-    <style>
 
-        /* =====================================================
-           LOGISTIC REGRESSION PAGE
-           ===================================================== */
-
-        .logistic-page {
-            width: 100%;
-            min-width: 0;
-            overflow-x: hidden;
-        }
-
-
-        /* =====================================================
-           APPROACH CARD
-           ===================================================== */
-
-        .approach-card {
-            width: 100%;
-            background: #ffffff;
-            border: 1px solid #dfe6ef;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(30, 55, 80, 0.05);
-        }
-
-        .approach-card h2 {
-            color: #244b75;
-            font-size: 22px;
-            margin-bottom: 8px;
-        }
-
-        .approach-card p {
-            color: #5c6d82;
-            margin-bottom: 18px;
-        }
-
-        .approach-control {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .approach-control label {
-            font-size: 16px;
-            font-weight: 600;
-            color: #294866;
-        }
-
-        .approach-select {
-            width: 360px;
-            height: 48px;
-            padding: 0 15px;
-            border: 1px solid #aebfd2;
-            border-radius: 7px;
-            background: #ffffff;
-            color: #253b57;
-            font-size: 16px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .approach-select:focus {
-            border-color: #244b75;
-            box-shadow: 0 0 0 2px rgba(36, 75, 117, 0.15);
-        }
-
-
-        /* =====================================================
-           SHOW / HIDE
-           ===================================================== */
-
-        .selection-section {
-            display: none;
-        }
-
-        .selection-section.show {
-            display: block;
-        }
-
-
-        /* =====================================================
-           SUMMARY
-           ===================================================== */
-
-        .logistic-summary {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 18px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-
-
-        /* =====================================================
-           SECTION CARD
-           ===================================================== */
-
-        .logistic-page .section-card {
-            display: block;
-            float: none;
-            clear: both;
-
-            width: 100%;
-            max-width: 100%;
-            min-width: 0;
-
-            box-sizing: border-box;
-
-            margin-top: 24px;
-
-            overflow: hidden;
-        }
-
-
-        /* =====================================================
-           TABLE
-           ===================================================== */
-
-        .logistic-page .table-wrapper {
-            width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-        }
-
-        .logistic-page .data-table {
-            width: 100%;
-            min-width: 700px;
-        }
-
-
-        /* =====================================================
-           SINGLE GRAPH
-           ===================================================== */
-
-        .logistic-single-plot {
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            width: 100%;
-
-            padding: 20px;
-
-            margin-top: 20px;
-
-            background: #f8fafc;
-
-            border: 1px solid #dfe6ef;
-
-            border-radius: 10px;
-
-            box-sizing: border-box;
-
-            overflow: hidden;
-        }
-
-        .logistic-single-plot img {
-
-            display: block;
-
-            width: auto;
-
-            max-width: 100%;
-
-            height: auto;
-
-            margin: 0 auto;
-        }
-
-
-        /* =====================================================
-           THREE PLOT GRID
-           ===================================================== */
-
-        .logistic-plot-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
-
-            gap: 20px;
-
-            width: 100%;
-
-            margin-top: 20px;
-
-        }
-
-
-        /* =====================================================
-           INDIVIDUAL PLOT
-           ===================================================== */
-
-        .logistic-plot-card {
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            width: 100%;
-
-            min-width: 0;
-
-            padding: 18px;
-
-            background: #f8fafc;
-
-            border: 1px solid #dfe6ef;
-
-            border-radius: 10px;
-
-            box-sizing: border-box;
-
-            overflow: hidden;
-        }
-
-
-        .logistic-plot-card h4 {
-
-            width: 100%;
-
-            color: #294866;
-
-            font-size: 16px;
-
-            line-height: 1.4;
-
-            text-align: center;
-
-            margin-bottom: 15px;
-
-        }
-
-
-        .logistic-plot-card img {
-
-            display: block;
-
-            width: 100%;
-
-            max-width: 100%;
-
-            height: auto;
-
-            margin: 0 auto;
-
-        }
-
-
-        /* =====================================================
-           RESPONSIVE
-           ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .logistic-summary {
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-
-            }
-
-            .logistic-plot-grid {
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-
-            }
-
-        }
-
-
-        @media (max-width: 800px) {
-
-            .logistic-summary {
-
-                grid-template-columns: 1fr;
-
-            }
-
-            .logistic-plot-grid {
-
-                grid-template-columns: 1fr;
-
-            }
-
-            .approach-control {
-
-                flex-direction: column;
-
-                align-items: stretch;
-
-            }
-
-            .approach-select {
-
-                width: 100%;
-
-            }
-
-        }
-
-
-        @media (max-width: 550px) {
-
-            .logistic-summary {
-
-                grid-template-columns: 1fr;
-
-            }
-
-        }
-
-    </style>
 
 </head>
 
 
-<body>
+<body data-page="{{ active|default('none') }}">
+<a class="skip-link" href="#main-content">Skip to content</a>
 
 
 <!-- ============================================================
      TOP BAR
      ============================================================ -->
 
-<div class="topbar">
-
-    <h1>PolicyPulse</h1>
-
-    <p>
-        Vehicle Insurance Response Analysis
-    </p>
-
-</div>
+{% include '_topbar.html' %}
 
 
 <div class="layout">
@@ -367,76 +35,14 @@
          SIDEBAR
          ======================================================== -->
 
-    <aside class="sidebar">
-
-        <ul>
-
-            <li>
-                <a href="/" class="menu-item">
-                    🏠 Home
-                </a>
-            </li>
-
-            <li>
-                <a href="/data-loading" class="menu-item">
-                    📂 Data Loading
-                </a>
-            </li>
-
-            <li>
-                <a href="/eda" class="menu-item">
-                    📊 EDA
-                </a>
-            </li>
-
-            <li>
-                <a href="/preprocessing" class="menu-item">
-                    ⚙️ Preprocessing
-                </a>
-            </li>
-
-            <li>
-                <a href="/linear-regression"
-                   class="menu-item">
-                    📈 Linear Regression
-                </a>
-            </li>
-
-            <li>
-                <a href="/logistic-regression"
-                   class="menu-item active">
-                    🔢 Logistic Regression
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ url_for('tree_based_page') }}"
-                   class="menu-item">
-                    🌳 Tree Based Models
-                </a>
-            </li>
-
-            <li>
-
-                <a
-                    href="{{ url_for('unsupervised_page') }}"
-                    class="menu-item"
-                >
-                    🔵 Unsupervised Learning
-                </a>
-
-            </li>
-
-        </ul>
-
-    </aside>
+    {% include '_sidebar.html' %}
 
 
     <!-- ========================================================
          MAIN CONTENT
          ======================================================== -->
 
-    <main class="content logistic-page">
+    <main id="main-content" tabindex="-1" class="content logistic-page">
 
 
         <h1>
@@ -1236,6 +842,7 @@ function changeLogisticApproach() {
 </script>
 
 
+<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
 </body>
 
 </html>

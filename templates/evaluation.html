@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolicyPulse - Evaluation</title>
+    {% include '_ui_head.html' %}
+</head><body data-page="{{ active|default('none') }}">
+<a class="skip-link" href="#main-content">Skip to content</a>
+{% include '_topbar.html' %}
+<div class="layout">{% include '_sidebar.html' %}<main id="main-content" tabindex="-1" class="content">
+    <h1>{{ ' Best Model' if active == 'best-model' else ' Final Results' if active == 'final-results' else ' Model Comparison' }}</h1>
+    <p>Compare insurance-interest classifiers on the same held-out customers. Annual premium regression is reported separately.</p>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <div class="section-card"><h2>Evaluate Models</h2>
+        <p>The first run trains every available classifier and all three regression models. Results are cached for subsequent visits.</p>
+        <form method="POST"><button class="run-button" type="submit">Run Model Comparison</button></form>
+    </div>
+    {% if result %}
+    <div class="section-card"><h2>Best Observed Classifier</h2><div class="card-container">
+        <div class="card"><h3>Model</h3><p>{{ result.best.Model }}</p></div>
+        <div class="card"><h3>PR AUC</h3><p>{{ '%.4f'|format(result.best['PR AUC']) }}</p></div>
+        <div class="card"><h3>ROC AUC</h3><p>{{ '%.4f'|format(result.best['ROC AUC']) }}</p></div>
+        <div class="card"><h3>F1 Score</h3><p>{{ '%.4f'|format(result.best['F1 Score']) }}</p></div>
+    </div><p>Ranked by average precision (PR AUC), which measures positive-class ranking for this imbalanced dataset. This is an exploratory held-out comparison; an independent validation is needed for a final deployment estimate.</p></div>
+    <div class="section-card"><h2>Classifier Comparison</h2>
+        <p>Always predicting the majority class achieves {{ '%.2f'|format(result.majority_baseline * 100) }}% accuracy. The random-ranking PR AUC baseline is {{ '%.4f'|format(result.pr_baseline) }}.</p>
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Model</th>{% for metric in ['Accuracy','Precision','Recall','F1 Score','ROC AUC','PR AUC'] %}<th>{{ metric }}</th>{% endfor %}</tr></thead>
+        <tbody>{% for row in result.comparison %}<tr><td>{{ row.Model }}</td>{% for metric in ['Accuracy','Precision','Recall','F1 Score','ROC AUC','PR AUC'] %}<td>{{ '%.4f'|format(row[metric]) }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+        {% if result.unavailable %}<p>Optional packages not installed: {{ result.unavailable|join(', ') }}.</p>{% endif %}
+    </div>
+    <div class="section-card"><h2>Annual Premium Regression</h2><p>MAE and RMSE are in original premium units. Premium and Response are excluded from predictors.</p>
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th></tr></thead><tbody>
+        {% for row in result.regression %}<tr><td>{{ row.Model }}</td><td>{{ '{:,.2f}'.format(row.MAE) }}</td><td>{{ '{:,.2f}'.format(row.RMSE) }}</td><td>{{ '%.4f'|format(row['R2 Score']) }}</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+    <div class="section-card"><h2>Data and Reproducibility</h2><p>{{ '{:,}'.format(result.summary.original_rows) }} customers; {{ '{:,}'.format(result.summary.training_rows) }} training rows and {{ '{:,}'.format(result.summary.testing_rows) }} test rows. Split seed: 42. Imputation, encoding, clipping and scaling learn from training rows only.</p></div>
+    {% endif %}
+</main></div><script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
+</body></html>

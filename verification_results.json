@@ -3,42 +3,42 @@
     {
       "path": "/",
       "form": null,
-      "seconds": 0.68,
+      "seconds": 0.31,
       "plots": 0,
       "status": "passed"
     },
     {
       "path": "/data-loading",
       "form": null,
-      "seconds": 0.83,
+      "seconds": 0.32,
       "plots": 0,
       "status": "passed"
     },
     {
       "path": "/eda",
       "form": null,
-      "seconds": 20.25,
+      "seconds": 0.14,
       "plots": 18,
       "status": "passed"
     },
     {
       "path": "/preprocessing",
       "form": null,
-      "seconds": 3.37,
+      "seconds": 2.85,
       "plots": 0,
       "status": "passed"
     },
     {
       "path": "/linear-regression",
       "form": null,
-      "seconds": 31.61,
+      "seconds": 0.02,
       "plots": 7,
       "status": "passed"
     },
     {
       "path": "/logistic-regression",
       "form": null,
-      "seconds": 79.65,
+      "seconds": 0.06,
       "plots": 13,
       "status": "passed"
     },
@@ -47,7 +47,7 @@
       "form": {
         "algorithm": "decision_tree"
       },
-      "seconds": 9.29,
+      "seconds": 0.04,
       "plots": 2,
       "status": "passed"
     },
@@ -56,7 +56,7 @@
       "form": {
         "algorithm": "id3"
       },
-      "seconds": 10.3,
+      "seconds": 0.02,
       "plots": 2,
       "status": "passed"
     },
@@ -65,7 +65,7 @@
       "form": {
         "algorithm": "random_forest"
       },
-      "seconds": 19.24,
+      "seconds": 0.92,
       "plots": 2,
       "status": "passed"
     },
@@ -74,7 +74,7 @@
       "form": {
         "algorithm": "extra_trees"
       },
-      "seconds": 17.26,
+      "seconds": 0.85,
       "plots": 2,
       "status": "passed"
     },
@@ -83,7 +83,7 @@
       "form": {
         "algorithm": "gradient_boosting"
       },
-      "seconds": 72.26,
+      "seconds": 0.05,
       "plots": 2,
       "status": "passed"
     },
@@ -92,7 +92,7 @@
       "form": {
         "algorithm": "adaboost"
       },
-      "seconds": 32.52,
+      "seconds": 0.08,
       "plots": 2,
       "status": "passed"
     },
@@ -101,7 +101,7 @@
       "form": {
         "algorithm": "xgboost"
       },
-      "seconds": 5.59,
+      "seconds": 0.12,
       "plots": 2,
       "status": "passed"
     },
@@ -110,7 +110,7 @@
       "form": {
         "algorithm": "lightgbm"
       },
-      "seconds": 4.67,
+      "seconds": 0.11,
       "plots": 2,
       "status": "passed"
     },
@@ -120,8 +120,8 @@
         "method": "manual",
         "k": "3"
       },
-      "seconds": 4.14,
-      "plots": 2,
+      "seconds": 10.99,
+      "plots": 3,
       "status": "passed"
     },
     {
@@ -130,7 +130,7 @@
         "method": "elbow",
         "k": "3"
       },
-      "seconds": 5.5,
+      "seconds": 8.94,
       "plots": 3,
       "status": "passed"
     },
@@ -140,7 +140,7 @@
         "method": "silhouette",
         "k": "3"
       },
-      "seconds": 6.71,
+      "seconds": 8.66,
       "plots": 3,
       "status": "passed"
     },
@@ -150,8 +150,8 @@
         "k": "3",
         "linkage": "ward"
       },
-      "seconds": 2.28,
-      "plots": 3,
+      "seconds": 3.19,
+      "plots": 2,
       "status": "passed"
     },
     {
@@ -160,14 +160,14 @@
         "eps": "0.8",
         "min_samples": "10"
       },
-      "seconds": 1.77,
-      "plots": 2,
+      "seconds": 2.72,
+      "plots": 1,
       "status": "passed"
     },
     {
-      "path": "/model-comparison",
+      "path": "/best-model",
       "form": {},
-      "seconds": 0.02,
+      "seconds": 0.01,
       "plots": 0,
       "status": "passed"
     }
@@ -175,22 +175,32 @@
   "dataset": "Policypulse.csv",
   "classification": [
     {
-      "Model": "LightGBM",
-      "Accuracy": 0.7042717325706489,
-      "Precision": 0.283970015385119,
-      "Recall": 0.9286020124170413,
-      "F1 Score": 0.43493519841568273,
-      "ROC AUC": 0.8575083208363935,
-      "PR AUC": 0.3685768628295566
-    },
-    {
       "Model": "XGBoost",
       "Accuracy": 0.704206134711763,
       "Precision": 0.2837111780893723,
       "Recall": 0.9269963605223721,
       "F1 Score": 0.43445542567601464,
       "ROC AUC": 0.8575184778010303,
-      "PR AUC": 0.36813624210322615
+      "PR AUC": 0.3680516862626066,
+      "Average Precision": 0.36813624210322615,
+      "Balanced Accuracy": 0.800041242462143,
+      "Log Loss": 0.4608135034672968,
+      "Brier Score": 0.17125446699263683,
+      "Validation AP": 0.3685550114246714
+    },
+    {
+      "Model": "LightGBM",
+      "Accuracy": 0.7042717325706489,
+      "Precision": 0.283970015385119,
+      "Recall": 0.9286020124170413,
+      "F1 Score": 0.43493519841568273,
+      "ROC AUC": 0.8575083208363935,
+      "PR AUC": 0.36853167584584007,
+      "Average Precision": 0.3685768628295566,
+      "Balanced Accuracy": 0.8007693076439273,
+      "Log Loss": 0.46118497444912077,
+      "Brier Score": 0.1712761272939656,
+      "Validation AP": 0.3675883952177463
     },
     {
       "Model": "Gradient Boosting",
@@ -199,7 +209,12 @@
       "Recall": 0.9328837508028259,
       "F1 Score": 0.42988210920929315,
       "ROC AUC": 0.8556309613347757,
-      "PR AUC": 0.3621791149220519
+      "PR AUC": 0.3624306554132397,
+      "Average Precision": 0.3621791149220519,
+      "Balanced Accuracy": 0.79831238975548,
+      "Log Loss": 0.4672884929463487,
+      "Brier Score": 0.17355326457913775,
+      "Validation AP": 0.3633414717696825
     },
     {
       "Model": "Random Forest",
@@ -208,7 +223,12 @@
       "Recall": 0.9216441875401413,
       "F1 Score": 0.43207708134691625,
       "ROC AUC": 0.8519787090750831,
-      "PR AUC": 0.353049024498907
+      "PR AUC": 0.35289960385821234,
+      "Average Precision": 0.353049024498907,
+      "Balanced Accuracy": 0.7970810650619367,
+      "Log Loss": 0.47802622628979174,
+      "Brier Score": 0.17046607195512833,
+      "Validation AP": 0.35585165692957044
     },
     {
       "Model": "Extra Trees",
@@ -217,16 +237,12 @@
       "Recall": 0.9229287090558767,
       "F1 Score": 0.43157473220542597,
       "ROC AUC": 0.8498429063605325,
-      "PR AUC": 0.3498139976721265
-    },
-    {
-      "Model": "Decision Tree (Gini)",
-      "Accuracy": 0.7044816457190838,
-      "Precision": 0.2825089913221368,
-      "Recall": 0.9165061014771998,
-      "F1 Score": 0.43188983328709424,
-      "ROC AUC": 0.8442095498323157,
-      "PR AUC": 0.3469080208478864
+      "PR AUC": 0.3496850489517453,
+      "Average Precision": 0.3498139976721265,
+      "Balanced Accuracy": 0.7970504789298523,
+      "Log Loss": 0.4815831825079512,
+      "Brier Score": 0.1725004419118751,
+      "Validation AP": 0.35115745867974285
     },
     {
       "Model": "Decision Tree (Entropy / ID3-style)",
@@ -235,25 +251,26 @@
       "Recall": 0.9218582744594306,
       "F1 Score": 0.4306322974223067,
       "ROC AUC": 0.8459713974690113,
-      "PR AUC": 0.3454567135937856
+      "PR AUC": 0.34913074754547263,
+      "Average Precision": 0.3454567135937856,
+      "Balanced Accuracy": 0.796133981727323,
+      "Log Loss": 0.5265986578032722,
+      "Brier Score": 0.17512190231074803,
+      "Validation AP": 0.3465459842966404
     },
     {
-      "Model": "Logistic Regression",
-      "Accuracy": 0.6962163154994621,
-      "Precision": 0.27919690527190766,
-      "Recall": 0.934810533076429,
-      "F1 Score": 0.42997464365722166,
-      "ROC AUC": 0.8497209779700463,
-      "PR AUC": 0.3378409997512758
-    },
-    {
-      "Model": "Ridge Logistic Regression (L2)",
-      "Accuracy": 0.6960720002099131,
-      "Precision": 0.27912698919920753,
-      "Recall": 0.9350246199957183,
-      "F1 Score": 0.42991436164976865,
-      "ROC AUC": 0.8497748182053779,
-      "PR AUC": 0.33743214264376536
+      "Model": "Decision Tree (Gini)",
+      "Accuracy": 0.7044816457190838,
+      "Precision": 0.2825089913221368,
+      "Recall": 0.9165061014771998,
+      "F1 Score": 0.43188983328709424,
+      "ROC AUC": 0.8442095498323157,
+      "PR AUC": 0.3497523095045425,
+      "Average Precision": 0.3469080208478864,
+      "Balanced Accuracy": 0.7956857660496046,
+      "Log Loss": 0.5217985248370837,
+      "Brier Score": 0.17486228084074928,
+      "Validation AP": 0.340627640388096
     },
     {
       "Model": "Lasso Logistic Regression (L1)",
@@ -262,7 +279,40 @@
       "Recall": 0.9371654891886105,
       "F1 Score": 0.4296405349036928,
       "ROC AUC": 0.8497770613484505,
-      "PR AUC": 0.33689990907676853
+      "PR AUC": 0.3367920882272288,
+      "Average Precision": 0.33689990907676853,
+      "Balanced Accuracy": 0.7991898020105732,
+      "Log Loss": 0.4724385142941561,
+      "Brier Score": 0.17605087373155937,
+      "Validation AP": 0.33605811583461576
+    },
+    {
+      "Model": "Ridge Logistic Regression (L2)",
+      "Accuracy": 0.6960720002099131,
+      "Precision": 0.27912698919920753,
+      "Recall": 0.9350246199957183,
+      "F1 Score": 0.42991436164976865,
+      "ROC AUC": 0.8497748182053779,
+      "PR AUC": 0.3373228162207768,
+      "Average Precision": 0.33743214264376536,
+      "Balanced Accuracy": 0.7988594989930744,
+      "Log Loss": 0.47226615278338635,
+      "Brier Score": 0.17584305684171855,
+      "Validation AP": 0.3354922352645457
+    },
+    {
+      "Model": "Logistic Regression",
+      "Accuracy": 0.6962163154994621,
+      "Precision": 0.27919690527190766,
+      "Recall": 0.934810533076429,
+      "F1 Score": 0.42997464365722166,
+      "ROC AUC": 0.8497209779700463,
+      "PR AUC": 0.3377309541415178,
+      "Average Precision": 0.3378409997512758,
+      "Balanced Accuracy": 0.7988496445286452,
+      "Log Loss": 0.4722374469931363,
+      "Brier Score": 0.17578496802105742,
+      "Validation AP": 0.3349996045971702
     },
     {
       "Model": "AdaBoost",
@@ -271,43 +321,362 @@
       "Recall": 0.9693855705416399,
       "F1 Score": 0.4090796160361378,
       "ROC AUC": 0.8412310575650532,
-      "PR AUC": 0.31555890748638477
+      "PR AUC": 0.5484717655989666,
+      "Average Precision": 0.31555890748638477,
+      "Balanced Accuracy": 0.7912343522564659,
+      "Log Loss": 0.48610043009027226,
+      "Brier Score": 0.16049828256028562,
+      "Validation AP": 0.3148564363251434
     }
   ],
   "regression": [
     {
       "Category": "Without Regularization",
       "Model": "Linear Regression",
-      "MAE": 9878.038614503157,
-      "MSE": 219531951.4760312,
-      "RMSE": 14816.610660877583,
-      "R2 Score": 0.24991777669983184
+      "MAE": 9852.835789469907,
+      "MSE": 219041635.24011663,
+      "RMSE": 14800.055244495428,
+      "R2 Score": 0.25159305672117827
     },
     {
       "Category": "With Regularization",
       "Model": "Ridge Regression (L2)",
-      "MAE": 9890.770790148472,
-      "MSE": 219838014.09176353,
-      "RMSE": 14826.935424819369,
-      "R2 Score": 0.2488720422373356
+      "MAE": 9860.055060677054,
+      "MSE": 219142624.30073118,
+      "RMSE": 14803.466631189169,
+      "R2 Score": 0.25124800399147107
     },
     {
       "Category": "With Regularization",
       "Model": "Lasso Regression (L1)",
-      "MAE": 9990.46548678456,
-      "MSE": 221387785.94842926,
-      "RMSE": 14879.105683757653,
-      "R2 Score": 0.2435768844617131
+      "MAE": 9970.876782686386,
+      "MSE": 221038329.05447876,
+      "RMSE": 14867.357837036101,
+      "R2 Score": 0.24477088561826266
     }
   ],
-  "best_observed": {
-    "Model": "LightGBM",
-    "Accuracy": 0.7042717325706489,
-    "Precision": 0.283970015385119,
-    "Recall": 0.9286020124170413,
-    "F1 Score": 0.43493519841568273,
-    "ROC AUC": 0.8575083208363935,
-    "PR AUC": 0.3685768628295566
+  "best_selected": {
+    "algorithm": "xgboost",
+    "Model": "XGBoost",
+    "threshold": 0.2399108702368324,
+    "training_cv_f1": 0.45744773138591927,
+    "calibrated": true,
+    "Accuracy": 0.7815197711946682,
+    "Precision": 0.3289344377369086,
+    "Recall": 0.7524084778420038,
+    "F1 Score": 0.4577512943245091,
+    "ROC AUC": 0.8575184778010303,
+    "Average Precision": 0.36813624210322615,
+    "PR AUC": 0.3680516862626066,
+    "Balanced Accuracy": 0.7689973011219589,
+    "Log Loss": 0.2676503954176472,
+    "Brier Score": 0.08677796190462539,
+    "confusion_matrix": [
+      [
+        52540,
+        14340
+      ],
+      [
+        2313,
+        7029
+      ]
+    ]
+  },
+  "selection": {
+    "best": {
+      "algorithm": "xgboost",
+      "Model": "XGBoost",
+      "Accuracy": 0.7027498622444963,
+      "Precision": 0.2822994669893071,
+      "Recall": 0.9241061871119675,
+      "F1 Score": 0.43248252886807104,
+      "ROC AUC": 0.857514943830353,
+      "Average Precision": 0.3685550114246714,
+      "PR AUC": 0.3684589591300187,
+      "Balanced Accuracy": 0.7979681653263186,
+      "Log Loss": 0.4627218056055337,
+      "Brier Score": 0.17220327901352758,
+      "confusion_matrix": [
+        [
+          44932,
+          21948
+        ],
+        [
+          709,
+          8633
+        ]
+      ]
+    },
+    "comparison": [
+      {
+        "algorithm": "xgboost",
+        "Model": "XGBoost",
+        "Accuracy": 0.7027498622444963,
+        "Precision": 0.2822994669893071,
+        "Recall": 0.9241061871119675,
+        "F1 Score": 0.43248252886807104,
+        "ROC AUC": 0.857514943830353,
+        "Average Precision": 0.3685550114246714,
+        "PR AUC": 0.3684589591300187,
+        "Balanced Accuracy": 0.7979681653263186,
+        "Log Loss": 0.4627218056055337,
+        "Brier Score": 0.17220327901352758,
+        "confusion_matrix": [
+          [
+            44932,
+            21948
+          ],
+          [
+            709,
+            8633
+          ]
+        ]
+      },
+      {
+        "algorithm": "lightgbm",
+        "Model": "LightGBM",
+        "Accuracy": 0.7014772637821102,
+        "Precision": 0.28176256183285603,
+        "Recall": 0.9267822736030829,
+        "F1 Score": 0.4321437484402296,
+        "ROC AUC": 0.8575683047068904,
+        "Average Precision": 0.3675883952177463,
+        "PR AUC": 0.3675755349517892,
+        "Balanced Accuracy": 0.7983941272321634,
+        "Log Loss": 0.46329035135153435,
+        "Brier Score": 0.17235237396847705,
+        "confusion_matrix": [
+          [
+            44810,
+            22070
+          ],
+          [
+            684,
+            8658
+          ]
+        ]
+      },
+      {
+        "algorithm": "gradient_boosting",
+        "Model": "Gradient Boosting",
+        "Accuracy": 0.6955865760541576,
+        "Precision": 0.27842961731513155,
+        "Recall": 0.9322414900449583,
+        "F1 Score": 0.4287929888481327,
+        "ROC AUC": 0.8557713134283715,
+        "Average Precision": 0.3633414717696825,
+        "PR AUC": 0.3634068918857669,
+        "Balanced Accuracy": 0.7973856971755892,
+        "Log Loss": 0.4698138667880725,
+        "Brier Score": 0.17461236829489207,
+        "confusion_matrix": [
+          [
+            44310,
+            22570
+          ],
+          [
+            633,
+            8709
+          ]
+        ]
+      },
+      {
+        "algorithm": "random_forest",
+        "Model": "Random Forest",
+        "Accuracy": 0.7020807640838603,
+        "Precision": 0.2811435682473146,
+        "Recall": 0.9189681010490259,
+        "F1 Score": 0.4305632178143337,
+        "ROC AUC": 0.8529128649272872,
+        "Average Precision": 0.35585165692957044,
+        "PR AUC": 0.3558030196269117,
+        "Balanced Accuracy": 0.7953766940651827,
+        "Log Loss": 0.4782481949704364,
+        "Brier Score": 0.17122024231282168,
+        "confusion_matrix": [
+          [
+            44929,
+            21951
+          ],
+          [
+            757,
+            8585
+          ]
+        ]
+      },
+      {
+        "algorithm": "extra_trees",
+        "Model": "Extra Trees",
+        "Accuracy": 0.6952979454750597,
+        "Precision": 0.2779217455290015,
+        "Recall": 0.9298865339327768,
+        "F1 Score": 0.42794157491563833,
+        "ROC AUC": 0.8506269620899698,
+        "Average Precision": 0.35115745867974285,
+        "PR AUC": 0.3510498866717742,
+        "Balanced Accuracy": 0.7962082191194984,
+        "Log Loss": 0.4847631888110043,
+        "Brier Score": 0.1738093060644602,
+        "confusion_matrix": [
+          [
+            44310,
+            22570
+          ],
+          [
+            655,
+            8687
+          ]
+        ]
+      },
+      {
+        "algorithm": "id3",
+        "Model": "Decision Tree (Entropy / ID3-style)",
+        "Accuracy": 0.6980924142635985,
+        "Precision": 0.2780844155844156,
+        "Recall": 0.9168272318561336,
+        "F1 Score": 0.4267350904289771,
+        "ROC AUC": 0.844979211993682,
+        "Average Precision": 0.3465459842966404,
+        "PR AUC": 0.3505655676009756,
+        "Balanced Accuracy": 0.7921830537271098,
+        "Log Loss": 0.5342558151999061,
+        "Brier Score": 0.17615495998878783,
+        "confusion_matrix": [
+          [
+            44645,
+            22235
+          ],
+          [
+            777,
+            8565
+          ]
+        ]
+      },
+      {
+        "algorithm": "decision_tree",
+        "Model": "Decision Tree (Gini)",
+        "Accuracy": 0.6966755005116633,
+        "Precision": 0.2778745082865803,
+        "Recall": 0.9225005352172982,
+        "F1 Score": 0.4270988204975716,
+        "ROC AUC": 0.8431567698842188,
+        "Average Precision": 0.340627640388096,
+        "PR AUC": 0.3425856253971183,
+        "Balanced Accuracy": 0.7938160570823334,
+        "Log Loss": 0.5277750747841052,
+        "Brier Score": 0.17609838336429012,
+        "confusion_matrix": [
+          [
+            44484,
+            22396
+          ],
+          [
+            724,
+            8618
+          ]
+        ]
+      },
+      {
+        "algorithm": "lasso_logistic",
+        "Model": "Lasso Logistic Regression (L1)",
+        "Accuracy": 0.6904437039175041,
+        "Precision": 0.27564929954352274,
+        "Recall": 0.9372725326482552,
+        "F1 Score": 0.42601016858442603,
+        "ROC AUC": 0.8495666052319153,
+        "Average Precision": 0.33605811583461576,
+        "PR AUC": 0.33594636574834313,
+        "Balanced Accuracy": 0.7966192208695821,
+        "Log Loss": 0.4756193322467512,
+        "Brier Score": 0.1775218349469665,
+        "confusion_matrix": [
+          [
+            43871,
+            23009
+          ],
+          [
+            586,
+            8756
+          ]
+        ]
+      },
+      {
+        "algorithm": "ridge_logistic",
+        "Model": "Ridge Logistic Regression (L2)",
+        "Accuracy": 0.6920574112460969,
+        "Precision": 0.2763107902735562,
+        "Recall": 0.9341682723185614,
+        "F1 Score": 0.4264770561501246,
+        "ROC AUC": 0.8491976510106644,
+        "Average Precision": 0.3354922352645457,
+        "PR AUC": 0.3353819318011517,
+        "Balanced Accuracy": 0.7962034543410988,
+        "Log Loss": 0.4756375170798678,
+        "Brier Score": 0.17733450527156588,
+        "confusion_matrix": [
+          [
+            44023,
+            22857
+          ],
+          [
+            615,
+            8727
+          ]
+        ]
+      },
+      {
+        "algorithm": "logistic",
+        "Model": "Logistic Regression",
+        "Accuracy": 0.6928839442680591,
+        "Precision": 0.27666465563776077,
+        "Recall": 0.9326696638835367,
+        "F1 Score": 0.42674176564221866,
+        "ROC AUC": 0.8490400932174397,
+        "Average Precision": 0.3349996045971702,
+        "PR AUC": 0.33486057872315167,
+        "Balanced Accuracy": 0.7960298080183233,
+        "Log Loss": 0.4756725175220841,
+        "Brier Score": 0.17734045335436896,
+        "confusion_matrix": [
+          [
+            44100,
+            22780
+          ],
+          [
+            629,
+            8713
+          ]
+        ]
+      },
+      {
+        "algorithm": "adaboost",
+        "Model": "AdaBoost",
+        "Accuracy": 0.6529479677783318,
+        "Precision": 0.2572976653144592,
+        "Recall": 0.9708841789766646,
+        "F1 Score": 0.40679030341084926,
+        "ROC AUC": 0.8407044407158493,
+        "Average Precision": 0.3148564363251434,
+        "PR AUC": 0.5491172104050337,
+        "Balanced Accuracy": 0.789710929201251,
+        "Log Loss": 0.48710177660537063,
+        "Brier Score": 0.16078578930388437,
+        "confusion_matrix": [
+          [
+            40699,
+            26181
+          ],
+          [
+            272,
+            9070
+          ]
+        ]
+      }
+    ],
+    "fit_rows": 228665,
+    "validation_rows": 76222,
+    "fit_index_hash": "166c1919dfa6701b2469d903eed6061672a5754fea12100a5d119e1fbbda66a5",
+    "validation_index_hash": "cda42b86981abfcb7ff9784f9b8bbd7142b915b978c086f74da0c70e435633ee"
   },
   "training_rows": 304887,
   "testing_rows": 76222

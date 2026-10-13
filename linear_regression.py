@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.exceptions import ConvergenceWarning
+from sklearn.base import BaseEstimator, RegressorMixin, clone
+from inspect import signature
 from load_data import load_data
 from preprocessing import get_model_data
 from project_runtime import cached_analysis
@@ -17,12 +19,28 @@ RIDGE_ALPHA = 1.0
 LASSO_ALPHA = 1.0
 
 
+class PremiumRegressor(RegressorMixin, BaseEstimator):
+    """A linear estimator with an explicit nonnegative premium output rule."""
+
+    def __init__(self, estimator):
+        self.estimator = estimator
+
+    def fit(self, X, y):
+        if not np.isfinite(y).all() or (np.asarray(y) < 0).any():
+            raise ValueError("Premium targets must be finite and nonnegative.")
+        self.estimator_ = clone(self.estimator).fit(X, y)
+        return self
+
+    def predict(self, X):
+        return np.maximum(self.estimator_.predict(X), 0.0)
+
+
 def regression_data():
     train, test, _, _ = get_model_data()
     raw = load_data()
     target = raw[TARGET_COLUMN]
-    if target.isna().any() or not np.isfinite(target).all():
-        raise ValueError("Annual_Premium must contain finite, non-missing values for regression.")
+    if target.isna().any() or not np.isfinite(target).all() or (target < 0).any():
+        raise ValueError("Annual_Premium must contain finite, non-missing, nonnegative values for regression.")
     # Response is already excluded; premium must not be its own predictor.
     return (train.drop(columns=TARGET_COLUMN), test.drop(columns=TARGET_COLUMN),
             target.loc[train.index], target.loc[test.index])
@@ -30,6 +48,10 @@ def regression_data():
 
 def evaluate_model(model, X_test, y_test):
     predictions = model.predict(X_test)
+    if np.shape(predictions) != np.shape(y_test) or not np.isfinite(predictions).all():
+        raise ValueError("Regression predictions must be finite and aligned with target rows.")
+    if np.var(np.asarray(y_test, dtype=np.float64)) == 0:
+        raise ValueError("R² cannot be evaluated when all test premium values are identical.")
     mse = float(mean_squared_error(y_test, predictions))
     return {"MAE": float(mean_absolute_error(y_test, predictions)), "MSE": mse,
             "RMSE": mse ** 0.5, "R2": float(r2_score(y_test, predictions)), "predictions": predictions}
@@ -65,8 +87,10 @@ def run_linear_regression():
     # Premium targets are large; float32 coordinate descent can stall before
     # the Lasso duality-gap criterion is met. Retain float64 for regression.
     X_train, X_test = model_matrix(train, np.float64), model_matrix(test, np.float64)
-    models = {"Linear Regression": LinearRegression(), "Ridge Regression": Ridge(alpha=RIDGE_ALPHA, solver="lsqr"),
-              "Lasso Regression": Lasso(alpha=LASSO_ALPHA, max_iter=10000)}
+    linear_options = {"tol": 1e-10} if "tol" in signature(LinearRegression).parameters else {}
+    models = {"Linear Regression": PremiumRegressor(LinearRegression(**linear_options)),
+              "Ridge Regression": PremiumRegressor(Ridge(alpha=RIDGE_ALPHA, solver="lsqr", tol=1e-8)),
+              "Lasso Regression": PremiumRegressor(Lasso(alpha=LASSO_ALPHA, max_iter=10000, tol=1e-6))}
     results, plots, comparison = {}, {}, []
     for index, (name, model) in enumerate(models.items()):
         with warnings.catch_warnings():
@@ -82,7 +106,9 @@ def run_linear_regression():
     plots["comparison"] = create_comparison_plot(results)
     return {"dataset_shape": (len(train) + len(test), train.shape[1] + 1), "training_shape": train.shape,
             "testing_shape": test.shape, "comparison": comparison, "plots": plots, "target": TARGET_COLUMN,
-            "models": models, "baseline_mae": float(mean_absolute_error(y_test, np.full(len(y_test), np.median(y_train))))}
+            "models": models, "baseline_mae": float(mean_absolute_error(y_test, np.full(len(y_test), np.median(y_train)))),
+            "baseline_rmse": float(mean_squared_error(y_test, np.full(len(y_test), np.mean(y_train))) ** 0.5),
+            "raw_negative_counts": {name: int((model.estimator_.predict(X_test) < 0).sum()) for name, model in models.items()}}
 
 
 if __name__ == "__main__":

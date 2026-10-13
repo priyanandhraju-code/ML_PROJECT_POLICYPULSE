@@ -1,12 +1,14 @@
 <div class="section-card">
     <h2>Customer Segment Profiles</h2>
-    <p>These summaries use original customer values. Response rate describes each segment after clustering.</p>
+    <p>Customer cluster characteristics from the original values. Population percentages refer to the analyzed sample. Response rate describes each segment after clustering and is never used to form the clusters.</p>
     <div class="table-wrapper"><table class="data-table">
-        <thead><tr><th>Segment</th><th>Customers</th><th>Mean Age</th><th>Mean Premium</th><th>Response Rate</th></tr></thead>
+        <thead><tr><th>Segment</th><th>Customers</th><th>Population %</th><th>Mean Age</th><th>Mean Annual Premium</th><th>Mean Vintage (days)</th><th>Previously Insured %</th><th>Vehicle Damage %</th><th>Response Rate</th></tr></thead>
         <tbody>{% for row in result.profiles %}<tr>
             <td>{{ 'Noise / Outliers' if row.cluster == -1 else 'Cluster ' ~ row.cluster }}</td>
-            <td>{{ row.count }}</td><td>{{ '%.1f'|format(row.mean_age) }}</td>
-            <td>{{ '{:,.2f}'.format(row.mean_premium) }}</td><td>{{ '%.2f'|format(row.response_rate) }}%</td>
+            <td>{{ '{:,}'.format(row.count) }}</td><td>{{ '%.1f'|format(row.population_percentage) }}%</td>
+            <td>{{ '%.1f'|format(row.mean_age) }}</td><td>{{ '{:,.2f}'.format(row.mean_premium) }}</td>
+            <td>{{ '%.1f'|format(row.mean_vintage) }}</td><td>{{ '%.1f'|format(row.previously_insured_rate) }}%</td>
+            <td>{{ '%.1f'|format(row.vehicle_damage_rate) }}%</td><td>{{ '%.2f'|format(row.response_rate) }}%</td>
         </tr>{% endfor %}</tbody>
     </table></div>
 </div>

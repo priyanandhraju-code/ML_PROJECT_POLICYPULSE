@@ -250,4 +250,12 @@ body { height:100dvh; }
     .topbar p { margin-top:0; }
     .content { height:calc(100dvh - var(--header-height) - 45px); }
 }
+.clustering-output-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; align-items:start; }
+.clustering-output-grid .section-card { min-width:0; }
+.clustering-output-grid h2 { min-height:2.8em; }
+.clustering-output-grid .plot-img { width:100%; }
+.card-container.clustering-six-cards { grid-template-columns:repeat(3,minmax(0,1fr)); }
+form[data-k-selection] input:disabled { opacity:.55; cursor:not-allowed; }
+@media (max-width:1100px) { .clustering-output-grid { grid-template-columns:1fr; } .clustering-output-grid h2 { min-height:0; } }
+@media (max-width:650px) { .card-container.clustering-six-cards { grid-template-columns:1fr; } }
 @media print { html,body { height:auto; overflow:visible; } .layout,.content { height:auto; overflow:visible; } .sidebar,.topbar,.chart-expand,.skip-link,.form-actions,.approach-card { display:none; } .content { padding:0; } .section-card { break-inside:avoid; } }

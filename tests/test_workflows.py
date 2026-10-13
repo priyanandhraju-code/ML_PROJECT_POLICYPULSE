@@ -17,6 +17,7 @@ import tree_based as trees
 import unsupervised as clustering
 import policypulse_eda as eda
 import evaluation
+import model_selection
 
 
 @pytest.fixture(scope="module")
@@ -41,7 +42,8 @@ def application(tmp_path_factory):
     prep._prepared_dataset.cache_clear()
     prep._processed_frame.cache_clear()
     for function in [linear.run_linear_regression, logistic.run_logistic_regression, trees.run_tree_algorithm,
-                     clustering.run_clustering, eda.run_eda, evaluation.run_comparison]:
+                     clustering.run_clustering, eda.run_eda, evaluation.run_comparison,
+                     model_selection.select_classifier, model_selection.calibrated_selected_model]:
         function.cache_clear()
     web.app.config.update(TESTING=True)
     yield web.app.test_client(), data
@@ -160,10 +162,42 @@ def test_clustering_and_real_plot_urls(application, algorithm, extra):
     client, _ = application
     response = client.post("/" + algorithm, data={"x_feature": "Annual_Premium", "y_feature": "Vintage", **extra})
     assert_rendered(response, "Customer Segment Profiles")
+    html = response.get_data(as_text=True)
+    assert 'name="x_feature"' not in html and 'name="y_feature"' not in html
+    assert "Customer Clusters in 2D PCA Space" in html
+    assert "Population %" in html and "Vehicle Damage %" in html
     for url in re.findall(r'src="([^" ]+\.png(?:\?[^" ]*)?)"', response.get_data(as_text=True)):
         assert client.get(url).status_code == 200, url
     if algorithm == "dbscan" and extra["eps"] == "0.00001":
         assert "Not defined" in response.get_data(as_text=True)
+
+
+@pytest.mark.parametrize("algorithm,fields", [
+    ("kmeans", {"method": "elbow"}),
+    ("hierarchical", {"linkage_method": "ward"}),
+    ("dbscan", {"eps": 0.8, "min_samples": 10}),
+    ("dbscan", {"eps": 0.00001, "min_samples": 100}),
+])
+def test_clustering_profiles_and_pca_metadata_match_real_rows(application, algorithm, fields):
+    _, data = application
+    result = clustering.run_clustering(algorithm=algorithm, **fields)
+    raw = data.loc[result["sample_indices"]].assign(Cluster=result["labels"])
+    assert sum(row["count"] for row in result["profiles"]) == result["rows"]
+    assert sum(row["population_percentage"] for row in result["profiles"]) == pytest.approx(100)
+    assert result["noise_percentage"] == pytest.approx(100 * np.mean(result["labels"] == -1))
+    for row in result["profiles"]:
+        group = raw.loc[raw.Cluster == row["cluster"]]
+        assert row["mean_vintage"] == pytest.approx(group.Vintage.mean())
+        assert row["previously_insured_rate"] == pytest.approx(group.Previously_Insured.mean() * 100)
+        assert row["vehicle_damage_rate"] == pytest.approx(group.Vehicle_Damage.eq("Yes").mean() * 100)
+    X = clustering.get_clustering_data(clustering.SAMPLE_LIMITS[algorithm])
+    variance = np.linalg.svd(X.to_numpy() - X.to_numpy().mean(axis=0), compute_uv=False) ** 2
+    np.testing.assert_allclose(result["pca_variance"], variance[:2] / variance.sum(), rtol=1e-10)
+    assert result["model"].n_features_in_ == X.shape[1] > 2
+    if algorithm == "kmeans":
+        analysis = result["silhouette_analysis"]
+        assert result["best_silhouette_k"] == analysis["k_values"][np.argmax(analysis["scores"])]
+        assert result["k"] == result["recommended_k"] == result["elbow_analysis"]["recommended_k"]
 
 
 @pytest.mark.parametrize("path,fields,message", [
@@ -184,9 +218,11 @@ def test_invalid_input_is_visible_without_server_error(application, path, fields
 
 def test_evaluation_and_eda(application):
     client, _ = application
-    assert_rendered(client.post("/model-comparison"), "Best Observed Classifier")
+    assert_rendered(client.post("/best-model"), "Validation-Selected Classifier")
     result = evaluation.run_comparison()
-    assert result["best"]["PR AUC"] == max(row["PR AUC"] for row in result["comparison"])
+    assert result["best"]["Model"] == result["selection"]["best"]["Model"]
+    assert result["selection"]["best"]["Average Precision"] == max(row["Average Precision"] for row in result["selection"]["comparison"])
+    assert result["best"]["calibrated"]
     assert_rendered(client.get("/eda"), "Response")
 
 
@@ -217,3 +253,27 @@ def test_disk_cache_recovers_missing_plots(application):
     example_analysis.cache_clear()
     example_analysis()
     assert len(calls) == 2
+
+
+def test_selection_and_test_customers_are_disjoint(application):
+    fit, validation, y_fit, y_validation = model_selection.selection_split()
+    _, test, _, _ = prep.get_model_data()
+    assert set(fit.index).isdisjoint(validation.index)
+    assert set(fit.index).isdisjoint(test.index)
+    assert set(validation.index).isdisjoint(test.index)
+    assert fit.index.equals(y_fit.index)
+    assert validation.index.equals(y_validation.index)
+
+
+def test_changed_plot_invalidates_cached_results(application):
+    calls = []
+    @runtime.cached_analysis
+    def picture_analysis():
+        calls.append(1)
+        (runtime.PLOT_DIR / "manifest.png").write_bytes(b"correct chart")
+        return {"cluster_plot": "manifest.png"}
+    picture_analysis()
+    (runtime.PLOT_DIR / "manifest.png").write_bytes(b"chart from another result")
+    picture_analysis()
+    assert len(calls) == 2
+    assert (runtime.PLOT_DIR / "manifest.png").read_bytes() == b"correct chart"

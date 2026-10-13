@@ -1,373 +1,82 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PolicyPulse - K-Means Clustering</title>
-
     {% include '_ui_head.html' %}
-
-
 </head>
-
 <body data-page="{{ active|default('none') }}">
 <a class="skip-link" href="#main-content">Skip to content</a>
-
 {% include '_topbar.html' %}
-
 <div class="layout">
-
-    {% include '_sidebar.html' %}
-
-    <main id="main-content" tabindex="-1" class="content clustering-page">
-
-        <h1> K-Means Clustering</h1>
-
-        <p>
-            Explore a reproducible sample of up to 3,500 customers using
-            K-Means clustering, K selection methods, and cluster
-            performance metrics.
-        </p>
-
-        {% if error %}
-            <div class="error">
-                <strong>Unable to complete clustering:</strong>
-                {{ error }}
-            </div>
-        {% endif %}
-
-        <!-- K SELECTION FORM -->
-
-        <div class="section-card">
-            <h2>1. Select K-Means Parameters</h2>
-
-            <p>
-                Select how the number of clusters should be determined
-                and choose the two features used in the visualization.
-            </p>
-
-            {% if features %}
-
-                <form
-                    method="POST"
-                    action="{{ url_for('unsupervised_page') }}"
-                >
-
-                    <div class="clustering-form">
-
-                        <div class="form-group">
-                            <label for="method">
-                                K Selection Method
-                            </label>
-
-                            <select id="method" name="method">
-                                <option
-                                    value="manual"
-                                    {% if method == 'manual' %}selected{% endif %}
-                                >
-                                    Manual K Selection
-                                </option>
-
-                                <option
-                                    value="elbow"
-                                    {% if method == 'elbow' %}selected{% endif %}
-                                >
-                                    Elbow Method
-                                </option>
-
-                                <option
-                                    value="silhouette"
-                                    {% if method == 'silhouette' %}selected{% endif %}
-                                >
-                                    Silhouette Score
-                                </option>
-                            </select>
-
-                            <span class="help-text">
-                                Manual lets you choose K. Elbow and
-                                Silhouette help evaluate different K values.
-                            </span>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="k">
-                                Number of Clusters (K)
-                            </label>
-
-                            <input
-                                id="k"
-                                name="k"
-                                type="number"
-                                min="2"
-                                max="10"
-                                value="{{ selected_k }}"
-                            >
-
-                            <span class="help-text">
-                                Choose a value from 2 to 10 when using
-                                Manual or Elbow selection.
-                            </span>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="x_feature">
-                                X-axis Feature
-                            </label>
-
-                            <select id="x_feature" name="x_feature">
-                                {% for feature in features %}
-                                    <option
-                                        value="{{ feature }}"
-                                        {% if feature == x_feature %}selected{% endif %}
-                                    >
-                                        {{ feature }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="y_feature">
-                                Y-axis Feature
-                            </label>
-
-                            <select id="y_feature" name="y_feature">
-                                {% for feature in features %}
-                                    <option
-                                        value="{{ feature }}"
-                                        {% if feature == y_feature %}selected{% endif %}
-                                    >
-                                        {{ feature }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="run-button">
-                            Run K-Means
-                        </button>
-                    </div>
-
-                </form>
-
-            {% else %}
-
-                <div class="empty-message">
-                    No clustering features were loaded. Check
-                    get_clustering_data() and the processed dataset path
-                    in unsupervised.py.
+{% include '_sidebar.html' %}
+<main id="main-content" tabindex="-1" class="content clustering-page">
+    <h1>K-Means Clustering</h1>
+    <p>Group customers using their insurance, vehicle and demographic characteristics.</p>
+    {% if error %}<div class="error"><strong>Unable to complete clustering:</strong> {{ error }}</div>{% endif %}
+    <div class="section-card">
+        <h2>1. Select K-Means Parameters</h2>
+        <p>Clustering uses all {{ features|length }} varying encoded predictors, excluding Response and ID, on a reproducible sample of up to 3,500 customers. PCA summarizes those features into two axes for display after clustering.</p>
+        {% if features %}
+        <form method="POST" data-k-selection>
+            <div class="clustering-form">
+                <div class="form-group">
+                    <label for="method">Optimization Method</label>
+                    <select class="algorithm-select" id="method" name="method">
+                        <option value="silhouette" {% if method == 'silhouette' %}selected{% endif %}>Silhouette Analysis</option>
+                        <option value="elbow" {% if method == 'elbow' %}selected{% endif %}>Elbow Method (WCSS)</option>
+                        <option value="manual" {% if method == 'manual' %}selected{% endif %}>Manual K Selection</option>
+                    </select>
                 </div>
-
-            {% endif %}
+                <div class="form-group">
+                    <label for="k">Manual Clusters (K = 2 to 10)</label>
+                    <input class="algorithm-select" id="k" name="k" type="number" min="2" max="10" value="{{ selected_k }}" required {% if method != 'manual' %}disabled{% endif %} aria-describedby="k-help">
+                    <span class="help-text" id="k-help">Silhouette and Elbow select K automatically. Choose Manual to set your own K.</span>
+                </div>
+            </div>
+            <button class="run-button" type="submit">Run K-Means</button>
+        </form>
+        {% endif %}
+    </div>
+    {% if result %}
+    <div class="section-card">
+        <h2>2. Clustering Summary</h2>
+        <div class="result-grid">
+            <div class="card"><h3>Selected Cluster Count</h3><p>{{ result.k }}</p></div>
+            <div class="card"><h3>Best Silhouette K</h3><p>{{ result.best_silhouette_k }}</p></div>
+            <div class="card"><h3>Selection Method</h3><p>{{ result.method }}</p></div>
+            <div class="card"><h3>Customers Analyzed</h3><p>{{ '{:,}'.format(result.rows) }}</p></div>
         </div>
-
-        {% if result %}
-
-            <!-- SUMMARY -->
-
-            <div class="section-card">
-                <h2>2. Clustering Summary</h2>
-
-                <div class="result-grid">
-
-                    <div class="card">
-                        <h3>Sampled Customers</h3>
-                        <p>{{ "{:,}".format(result.rows) }} of {{ "{:,}".format(result.total_rows) }}</p>
-                    </div>
-
-                    <div class="card">
-                        <h3>Features</h3>
-                        <p>{{ result.features }}</p>
-                    </div>
-
-                    <div class="card">
-                        <h3>Selected K</h3>
-                        <p>{{ result.k }}</p>
-                    </div>
-
-                    <div class="card">
-                        <h3>Selection Method</h3>
-                        <p>{{ result.method }}</p>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- PERFORMANCE -->
-
-            <div class="section-card">
-                <h2>3. K-Means Performance</h2>
-
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Metric</th>
-                                <th>Value</th>
-                                <th>Interpretation</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr>
-                                <td>WCSS</td>
-                                <td class="metric-value">
-                                    {{ "%.4f"|format(result.wcss) }}
-                                </td>
-                                <td>
-                                    Measures the within-cluster sum of
-                                    squared distances. Lower values mean
-                                    tighter clusters, but WCSS generally
-                                    decreases as K increases.
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Silhouette Score</td>
-                                <td class="metric-value">
-                                    {{ "%.4f"|format(result.silhouette) if result.silhouette is not none else "Not defined" }}
-                                </td>
-                                <td>
-                                    Measures how well-separated the
-                                    clusters are. Higher values generally
-                                    indicate better separation.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {% if result.method == 'Silhouette' %}
-                    <p class="help-text">
-                        Recommended K:
-                        <strong>{{ result.recommended_k }}</strong>.
-                        Highest tested silhouette score:
-                        <strong>
-                            {{ "%.4f"|format(result.highest_silhouette) }}
-                        </strong>.
-                    </p>
-                {% endif %}
-            </div>
-
-            <!-- CLUSTER DISTRIBUTION -->
-
-            <div class="section-card">
-                <h2>4. Cluster Distribution</h2>
-
-                <p>
-                    Number of sampled customer records assigned to each cluster.
-                </p>
-
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Cluster</th>
-                                <th>Number of Records</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {% for cluster, count in result.distribution.items() %}
-                                <tr>
-                                    <td>Cluster {{ cluster }}</td>
-                                    <td>{{ "{:,}".format(count) }}</td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="2">
-                                        No cluster distribution is available.
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- ELBOW PLOT -->
-
-            {% if result.elbow_plot %}
-                <div class="section-card">
-                    <h2>5. Elbow Method</h2>
-
-                    <p>
-                        Compare WCSS values across different cluster
-                        counts to look for a point where the improvement
-                        begins to level off.
-                    </p>
-
-                    <div class="plot-card">
-                        <img
-                            src="{{ url_for(
-                                'static',
-                                filename='plots/kmeans_elbow.png'
-                            ) }}?v=31"
-                            alt="K-Means Elbow Method"
-                        >
-                    </div>
-                </div>
-            {% endif %}
-
-            <!-- SILHOUETTE PLOT -->
-
-            {% if result.silhouette_plot %}
-                <div class="section-card">
-                    <h2>6. Silhouette Score Analysis</h2>
-
-                    <p>
-                        The highest score among the tested K values is
-                        used by the current implementation to recommend K.
-                    </p>
-
-                    <div class="plot-card">
-                        <img
-                            src="{{ url_for(
-                                'static',
-                                filename='plots/kmeans_silhouette.png'
-                            ) }}?v=31"
-                            alt="K-Means Silhouette Score"
-                        >
-                    </div>
-                </div>
-            {% endif %}
-
-            <!-- CLUSTER VISUALIZATION -->
-
-            <div class="section-card">
-                <h2>7. Cluster Visualization</h2>
-
-                <p>
-                    Displaying clusters using
-                    <strong>{{ x_feature }}</strong> on the X-axis and
-                    <strong>{{ y_feature }}</strong> on the Y-axis.
-                    The plot uses these two selected features for
-                    visualization.
-                </p>
-
-                <div class="plot-card">
-                    <img
-                        src="{{ url_for(
-                            'static',
-                            filename='plots/' + result.cluster_plot
-                        ) }}?v=31"
-                        alt="K-Means Cluster Visualization"
-                    >
-                </div>
-            </div>
-
-            <div class="section-card"><h2>PCA Projection</h2><img class="plot-img" src="{{ url_for('static', filename='plots/' + result.pca_plot) }}" alt="Customer clusters in principal components"></div>
-            {% include '_cluster_profiles.html' %}
-        {% endif %}
-
-    </main>
-</div>
-
-<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
-</body>
-</html>
+        <p>Analyzed {{ '{:,}'.format(result.rows) }} of {{ '{:,}'.format(result.total_rows) }} customers using {{ result.features }} encoded features. All plots and summaries below describe this sample.</p>
+    </div>
+    <div class="clustering-output-grid">
+        <div class="section-card">
+            <h2>{{ 'Elbow Evaluation Curve' if method == 'elbow' else 'Silhouette Evaluation Curve' }}</h2>
+            <img class="plot-img" src="{{ url_for('static', filename='plots/' + (result.elbow_plot if method == 'elbow' else result.silhouette_plot)) }}" alt="{{ 'Elbow' if method == 'elbow' else 'Silhouette' }} evaluation curve with recommended K highlighted">
+            <p>{{ 'Elbow uses the largest normalized distance from the endpoint chord as a recommendation.' if method == 'elbow' else 'The dashed line marks the highest silhouette score among the tested K values.' }}{% if method == 'manual' %} Your selected K = {{ result.k }} remains unchanged by this recommendation.{% endif %}</p>
+        </div>
+        <div class="section-card">
+            <h2>Customer Clusters in 2D PCA Space (K = {{ result.k }})</h2>
+            <img class="plot-img" src="{{ url_for('static', filename='plots/' + result.pca_plot) }}" alt="K-Means customer clusters in 2D PCA space">
+            <p>Colors show the assigned clusters. Black crosses mark projected centers. The two displayed components retain {{ '%.1f'|format(result.pca_variance|sum * 100) }}% of the feature variance; overlapping points can still differ in other features.</p>
+        </div>
+    </div>
+    {% include '_cluster_profiles.html' %}
+    <div class="section-card">
+        <h2>K-Means Performance</h2>
+        <div class="table-wrapper"><table class="data-table">
+            <thead><tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr></thead>
+            <tbody>
+                <tr><td>WCSS</td><td>{{ '%.4f'|format(result.wcss) }}</td><td>Within-cluster sum of squared distances across all features. Usually decreases as K increases.</td></tr>
+                <tr><td>Silhouette Score</td><td>{{ '%.4f'|format(result.silhouette) if result.silhouette is not none else 'Not defined' }}</td><td>Higher values indicate stronger separation. Scores use up to 1,500 reproducibly selected customers.</td></tr>
+            </tbody>
+        </table></div>
+        <p>Best tested silhouette K: {{ result.best_silhouette_k }} (score {{ '%.4f'|format(result.highest_silhouette) }}). Elbow recommendation: {{ result.elbow_analysis.recommended_k }}.</p>
+        <details><summary>{{ 'Silhouette Evaluation Curve' if method == 'elbow' else 'Elbow Evaluation Curve' }}</summary>
+            <img class="plot-img" src="{{ url_for('static', filename='plots/' + (result.silhouette_plot if method == 'elbow' else result.elbow_plot)) }}" alt="Alternative K selection evaluation curve">
+        </details>
+    </div>
+    {% endif %}
+</main></div>
+<script src="{{ url_for('static', filename='ui.js') }}?v=2" defer></script>
+</body></html>

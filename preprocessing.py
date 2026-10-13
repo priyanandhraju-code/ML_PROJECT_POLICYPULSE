@@ -15,6 +15,7 @@ TEST_SIZE = 0.20
 RANDOM_STATE = 42
 NUMERIC_COLUMNS = ["Age", "Annual_Premium", "Vintage", "Driving_License", "Previously_Insured"]
 CONTINUOUS_COLUMNS = ["Age", "Annual_Premium", "Vintage"]
+BINARY_COLUMNS = ["Driving_License", "Previously_Insured"]
 CATEGORICAL_COLUMNS = ["Gender", "Vehicle_Age", "Vehicle_Damage", "Region_Code", "Policy_Sales_Channel"]
 
 
@@ -37,11 +38,17 @@ class PolicyPreprocessor:
         frame = frame[required].copy()
         for column in NUMERIC_COLUMNS:
             frame[column] = pd.to_numeric(frame[column], errors="coerce").replace([np.inf, -np.inf], np.nan)
+        for column in BINARY_COLUMNS:
+            if not frame[column].dropna().isin([0, 1]).all():
+                raise ValueError(f"{column} must contain only 0, 1 or missing values.")
+        for column in CONTINUOUS_COLUMNS:
+            if (frame[column].dropna() < 0).any():
+                raise ValueError(f"{column} must not contain negative raw values.")
         for column in ["Region_Code", "Policy_Sales_Channel"]:
             values = pd.to_numeric(frame[column], errors="coerce").replace([np.inf, -np.inf], np.nan)
             frame[column] = values.map(lambda value: str(float(value)) if pd.notna(value) else np.nan)
         for column in CATEGORICAL_COLUMNS:
-            frame[column] = frame[column].where(frame[column].notna(), np.nan)
+            frame[column] = frame[column].astype(object).where(frame[column].notna(), np.nan)
         return frame
 
     def _impute(self, frame):
@@ -54,8 +61,10 @@ class PolicyPreprocessor:
         frame = self._clean(frame)
         self.fill_values_ = {}
         for column in NUMERIC_COLUMNS:
-            value = frame[column].median()
-            self.fill_values_[column] = float(value) if pd.notna(value) else 0.0
+            if not frame[column].notna().any():
+                raise ValueError(f"Training feature {column} contains no finite observations.")
+            value = frame[column].mode().iloc[0] if column in BINARY_COLUMNS else frame[column].median()
+            self.fill_values_[column] = float(value)
         for column in CATEGORICAL_COLUMNS:
             modes = frame[column].mode()
             self.fill_values_[column] = modes.iloc[0] if len(modes) else "Unknown"
@@ -88,6 +97,8 @@ def _premium_statistics(values):
 
 def prepare_dataset(df):
     """Split raw rows first; never impute missing or invalid target labels."""
+    if not df.index.is_unique or df.columns.has_duplicates:
+        raise ValueError("Dataset rows and column names must have unique indices for label alignment.")
     df = remove_id(df).drop(columns=[c for c in df if c.startswith("Unnamed:")])
     required = NUMERIC_COLUMNS + CATEGORICAL_COLUMNS + [TARGET_COLUMN]
     missing = sorted(set(required) - set(df.columns))

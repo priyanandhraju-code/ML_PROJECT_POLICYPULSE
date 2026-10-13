@@ -22,7 +22,7 @@ def main():
     cases = [("GET", route, None) for route in ["/", "/data-loading", "/eda", "/preprocessing", "/linear-regression", "/logistic-regression"]]
     cases += [("POST", "/tree-based", {"algorithm": algorithm}) for algorithm in ALGORITHMS]
     cases += [("POST", "/unsupervised", {"method": method, "k": "3"}) for method in ["manual", "elbow", "silhouette"]]
-    cases += [("POST", "/hierarchical", {"k": "3", "linkage": "ward"}), ("POST", "/dbscan", {"eps": "0.8", "min_samples": "10"}), ("POST", "/model-comparison", {})]
+    cases += [("POST", "/hierarchical", {"k": "3", "linkage": "ward"}), ("POST", "/dbscan", {"eps": "0.8", "min_samples": "10"}), ("POST", "/best-model", {})]
     with (destination / "verification.log").open("w", encoding="utf-8") as log:
         for method, path, fields in cases:
             started = time.perf_counter()
@@ -41,7 +41,8 @@ def main():
         results = run_comparison()
         report["classification"] = results["comparison"]
         report["regression"] = results["regression"]
-        report["best_observed"] = results["best"]
+        report["best_selected"] = results["best"]
+        report["selection"] = results["selection"]
         report["training_rows"] = results["summary"]["training_rows"]
         report["testing_rows"] = results["summary"]["testing_rows"]
     (ROOT / "verification_results.json").write_text(json.dumps(report, indent=2), encoding="utf-8")

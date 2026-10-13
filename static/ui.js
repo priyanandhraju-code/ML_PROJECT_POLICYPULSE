@@ -1,6 +1,14 @@
 /* Presentation only. Forms submit their original fields to the original routes. */
 (() => {
     'use strict';
+    document.querySelectorAll('form[data-k-selection]').forEach(form => {
+        const method = form.querySelector('[name="method"]');
+        const k = form.querySelector('[name="k"]');
+        const update = () => { k.disabled = method.value !== 'manual'; };
+        method.addEventListener('change', update);
+        window.addEventListener('pageshow', update);
+        update();
+    });
     document.querySelectorAll('form[method="POST"], form[method="post"]').forEach(form => {
         const status = document.createElement('p');
         status.className = 'form-status';

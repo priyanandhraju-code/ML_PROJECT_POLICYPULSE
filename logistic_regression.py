@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from preprocessing import get_model_data
 from project_runtime import cached_analysis
-from modeling import model_matrix, classification_metrics, confusion_plot, roc_plot, save_figure
+from modeling import model_matrix, classification_metrics, confusion_plot, roc_plot, save_figure, checked_fit
 
 TARGET_COLUMN = "Response"
 RIDGE_C = 1.0
@@ -25,7 +25,7 @@ def create_roc_curve_plot(y_test, probabilities, model_name, filename):
 
 def create_comparison_plot(results):
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
-    for ax, metric in zip(axes, ["F1 Score", "ROC AUC", "PR AUC"]):
+    for ax, metric in zip(axes, ["F1 Score", "ROC AUC", "Average Precision"]):
         ax.bar(list(results), [r[metric] for r in results.values()])
         ax.set_ylim(0, 1)
         ax.set_title(metric)
@@ -33,19 +33,23 @@ def create_comparison_plot(results):
     return save_figure("logistic_regression_comparison.png")
 
 
+def build_logistic_models():
+    common = dict(class_weight="balanced", max_iter=MAX_ITERATIONS, random_state=42)
+    # Recent sklearn uses l1_ratio; older supported versions use penalty.
+    l1_options = {"l1_ratio": 1.0} if signature(LogisticRegression).parameters["penalty"].default == "deprecated" else {"penalty": "l1"}
+    return {"Logistic Regression": LogisticRegression(C=float("inf"), solver="lbfgs", **common),
+              "Ridge Logistic Regression": LogisticRegression(C=RIDGE_C, solver="lbfgs", **common),
+              "Lasso Logistic Regression": LogisticRegression(C=LASSO_C, solver="liblinear", **l1_options, **common)}
+
+
 @cached_analysis
 def run_logistic_regression():
     train, test, y_train, y_test = get_model_data()
     X_train, X_test = model_matrix(train), model_matrix(test)
-    common = dict(class_weight="balanced", max_iter=MAX_ITERATIONS, random_state=42)
-    # Recent sklearn uses l1_ratio; older supported versions use penalty.
-    l1_options = {"l1_ratio": 1.0} if signature(LogisticRegression).parameters["penalty"].default == "deprecated" else {"penalty": "l1"}
-    models = {"Logistic Regression": LogisticRegression(C=float("inf"), solver="lbfgs", **common),
-              "Ridge Logistic Regression": LogisticRegression(C=RIDGE_C, solver="lbfgs", **common),
-              "Lasso Logistic Regression": LogisticRegression(C=LASSO_C, solver="liblinear", **l1_options, **common)}
+    models = build_logistic_models()
     results, plots, comparison = {}, {}, []
     for index, (name, model) in enumerate(models.items()):
-        model.fit(X_train, y_train)
+        checked_fit(model, X_train, y_train)
         result = evaluate_model(model, X_test, y_test)
         results[name] = result
         key = ["logistic", "ridge", "lasso"][index]
@@ -54,7 +58,7 @@ def run_logistic_regression():
         plots[f"{key}_roc"] = roc_plot(y_test, result["probabilities"], name, f"{slug}_roc_curve.png")
         comparison.append({"Category": "Without Regularization" if index == 0 else "With Regularization",
                            "Model": name + ["", " (L2)", " (L1)"][index],
-                           **{metric: result[metric] for metric in ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC", "PR AUC"]}})
+                           **{metric: result[metric] for metric in ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC", "PR AUC", "Average Precision", "Balanced Accuracy", "Log Loss", "Brier Score"]}})
     plots["comparison"] = create_comparison_plot(results)
     return {"dataset_shape": (len(train) + len(test), train.shape[1] + 1), "training_shape": train.shape,
             "testing_shape": test.shape, "comparison": comparison, "plots": plots,

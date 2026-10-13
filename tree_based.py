@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, Gradi
 from sklearn.utils.class_weight import compute_sample_weight
 from preprocessing import get_model_data
 from project_runtime import cached_analysis
-from modeling import model_matrix, classification_metrics, confusion_plot, roc_plot
+from modeling import matrix_for_model, classification_metrics, confusion_plot, roc_plot, checked_fit
 
 ALGORITHMS = {
     "decision_tree": "Decision Tree (Gini)", "id3": "Decision Tree (Entropy / ID3-style)",
@@ -48,8 +48,8 @@ def run_tree_algorithm(algorithm):
     train, test, y_train, y_test = get_model_data()
     model = build_model(algorithm)
     weights = compute_sample_weight("balanced", y_train) if algorithm in {"gradient_boosting", "adaboost", "xgboost", "lightgbm"} else None
-    model.fit(model_matrix(train), y_train, sample_weight=weights)
-    metrics = evaluate_model(model, model_matrix(test), y_test)
+    checked_fit(model, matrix_for_model(model, train), y_train, sample_weight=weights)
+    metrics = evaluate_model(model, matrix_for_model(model, test), y_test)
     result = {"algorithm": ALGORITHMS[algorithm], "dataset_shape": (len(train) + len(test), train.shape[1] + 1),
               "feature_count": train.shape[1], "training_shape": train.shape, "testing_shape": test.shape,
               "model": model, "y_test": y_test, **metrics}

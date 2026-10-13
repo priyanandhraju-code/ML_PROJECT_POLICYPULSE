@@ -5,12 +5,15 @@ from linear_regression import run_linear_regression
 from tree_based import ALGORITHMS, run_tree_algorithm
 from preprocessing import get_prepared_dataset
 from project_runtime import cached_analysis
+from model_selection import select_classifier, calibrated_selected_model
 
-METRICS = ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC", "PR AUC"]
+METRICS = ["Accuracy", "Precision", "Recall", "F1 Score", "ROC AUC", "PR AUC", "Average Precision", "Balanced Accuracy", "Log Loss", "Brier Score"]
 
 
 @cached_analysis
 def run_comparison():
+    selection = select_classifier()
+    calibrated = calibrated_selected_model(selection["best"]["algorithm"])
     logistic = run_logistic_regression()
     rows = [{"Model": row["Model"], **{metric: row[metric] for metric in METRICS}} for row in logistic["comparison"]]
     unavailable = []
@@ -20,9 +23,13 @@ def run_comparison():
             continue
         result = run_tree_algorithm(algorithm)
         rows.append({"Model": name, **{metric: result[metric] for metric in METRICS}})
-    rows.sort(key=lambda row: (row["PR AUC"], row["ROC AUC"]), reverse=True)
+    validation_by_name = {row["Model"]: row for row in selection["comparison"]}
+    for row in rows:
+        row["Validation AP"] = validation_by_name[row["Model"]]["Average Precision"]
+    rows.sort(key=lambda row: (row["Validation AP"], row["ROC AUC"]), reverse=True)
     _, _, y_train, y_test, _, summary = get_prepared_dataset()
-    return {"comparison": rows, "best": rows[0], "unavailable": unavailable,
+    return {"comparison": rows, "best": {key: value for key, value in calibrated.items() if key not in {"model", "predictions", "probabilities"}},
+            "selection": selection, "unavailable": unavailable,
             "majority_baseline": float(y_test.value_counts(normalize=True).max()),
             "pr_baseline": float(y_test.mean()), "summary": summary,
             "regression": run_linear_regression()["comparison"],

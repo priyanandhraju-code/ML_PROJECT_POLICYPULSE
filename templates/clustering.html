@@ -11,39 +11,60 @@
 <div class="layout">
 {% include '_sidebar.html' %}
 <main id="main-content" tabindex="-1" class="content analysis-page">
-    <h1>{{ ' Hierarchical Clustering' if algorithm == 'hierarchical' else ' DBSCAN' }}</h1>
-    <p>Explore customer segments with {{ 'agglomerative clustering and a dendrogram' if algorithm == 'hierarchical' else 'density-based clustering and noise detection' }}.</p>
+    <h1>{{ 'Hierarchical Agglomerative Clustering' if algorithm == 'hierarchical' else 'DBSCAN Customer Clustering' }}</h1>
+    <p>Group customers using their insurance, vehicle and demographic characteristics.{{ ' DBSCAN also identifies observations outside dense clusters.' if algorithm == 'dbscan' else '' }}</p>
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
     <div class="section-card">
         <h2>1. Clustering Parameters</h2>
-        <p>Uses a reproducible sample of up to {{ '1,200' if algorithm == 'hierarchical' else '2,500' }} customers. Response and ID are excluded from clustering inputs.</p>
+        <p>Uses all {{ features|length }} varying encoded predictors on a reproducible sample of up to {{ '1,200' if algorithm == 'hierarchical' else '2,500' }} customers. Response and ID are excluded. PCA creates the display axes after clustering.</p>
         <form method="POST">
             <div class="analysis-form-grid">
             {% if algorithm == 'hierarchical' %}
+                <div><label for="linkage">Linkage Method</label><select class="algorithm-select" id="linkage" name="linkage">{% for name, description in [('ward', 'Ward (Variance Minimization)'), ('complete', 'Complete (Maximum Distance)'), ('average', 'Average (Mean Distance)')] %}<option value="{{ name }}" {% if linkage_method == name %}selected{% endif %}>{{ description }}</option>{% endfor %}</select></div>
                 <div><label for="k">Number of Clusters (K)</label><input class="algorithm-select" id="k" name="k" type="number" min="2" max="10" value="{{ selected_k }}" required></div>
-                <div><label for="linkage">Linkage</label><select class="algorithm-select" id="linkage" name="linkage">{% for name in ['ward', 'complete', 'average'] %}<option value="{{ name }}" {% if linkage_method == name %}selected{% endif %}>{{ name.title() }}</option>{% endfor %}</select></div>
             {% else %}
-                <div><label for="eps">Epsilon (neighborhood radius)</label><input class="algorithm-select" id="eps" name="eps" type="number" min="0.01" max="20" step="0.01" value="{{ eps }}" required></div>
+                <div><label for="eps">Epsilon (EPS)</label><input class="algorithm-select" id="eps" name="eps" type="number" min="0.01" max="20" step="0.01" value="{{ eps }}" required></div>
                 <div><label for="min_samples">Minimum Samples</label><input class="algorithm-select" id="min_samples" name="min_samples" type="number" min="2" max="100" value="{{ min_samples }}" required></div>
             {% endif %}
-            {% for axis, selected in [('x', x_feature), ('y', y_feature)] %}
-                <div><label for="{{ axis }}_feature">{{ axis.upper() }}-axis Feature</label><select class="algorithm-select" id="{{ axis }}_feature" name="{{ axis }}_feature">{% for feature in features %}<option value="{{ feature }}" {% if feature == selected %}selected{% endif %}>{{ feature }}</option>{% endfor %}</select></div>
-            {% endfor %}
-            </div><br><button class="run-button" type="submit">Run {{ 'Hierarchical Clustering' if algorithm == 'hierarchical' else 'DBSCAN' }}</button>
+            </div><button class="run-button" type="submit">{{ 'Compute Clusters' if algorithm == 'hierarchical' else 'Run DBSCAN' }}</button>
         </form>
     </div>
     {% if result %}
-    <div class="section-card"><h2>2. Clustering Summary</h2><div class="card-container">
-        <div class="card"><h3>Sampled Customers</h3><p>{{ result.rows }} of {{ '{:,}'.format(result.total_rows) }}</p></div>
-        <div class="card"><h3>Clusters</h3><p>{{ result.k }}</p></div>
-        <div class="card"><h3>Noise Records</h3><p>{{ result.noise }}</p></div>
-        <div class="card"><h3>Silhouette Score</h3><p>{{ '%.4f'|format(result.silhouette) if result.silhouette is not none else 'Not defined' }}</p></div>
-    </div><p>Silhouette excludes DBSCAN noise and requires at least two non-noise clusters.</p></div>
-    {% if result.dendro_plot %}<div class="section-card"><h2>3. Dendrogram</h2><img class="plot-img" src="{{ url_for('static', filename='plots/' + result.dendro_plot) }}" alt="Hierarchical dendrogram"></div>{% endif %}
-    <div class="section-card"><h2>Cluster Visualization</h2><img class="plot-img" src="{{ url_for('static', filename='plots/' + result.cluster_plot) }}" alt="Customer clusters by selected features"></div>
-    <div class="section-card"><h2>PCA Projection</h2><img class="plot-img" src="{{ url_for('static', filename='plots/' + result.pca_plot) }}" alt="Clusters in principal components"></div>
+    <div class="section-card"><h2>2. Clustering Summary</h2>
+        <div class="card-container {{ 'clustering-six-cards' if algorithm == 'dbscan' else '' }}">
+            <div class="card"><h3>Clusters Formed</h3><p>{{ result.k }}</p></div>
+            {% if algorithm == 'hierarchical' %}
+            <div class="card"><h3>Linkage Method</h3><p>{{ result.linkage_method.title() }}</p></div>
+            {% else %}
+            <div class="card"><h3>Noise / Outliers</h3><p>{{ '{:,}'.format(result.noise) }}</p></div>
+            <div class="card"><h3>Noise Percentage</h3><p>{{ '%.1f'|format(result.noise_percentage) }}%</p></div>
+            {% endif %}
+            <div class="card"><h3>Customers Analyzed</h3><p>{{ '{:,}'.format(result.rows) }}</p></div>
+            {% if algorithm == 'dbscan' %}
+            <div class="card"><h3>Epsilon (EPS)</h3><p>{{ result.eps }}</p></div>
+            <div class="card"><h3>Minimum Samples</h3><p>{{ result.min_samples }}</p></div>
+            {% else %}
+            <div class="card"><h3>Silhouette Score</h3><p>{{ '%.4f'|format(result.silhouette) if result.silhouette is not none else 'Not defined' }}</p></div>
+            {% endif %}
+        </div>
+        <p>Analyzed {{ '{:,}'.format(result.rows) }} of {{ '{:,}'.format(result.total_rows) }} customers using {{ result.features }} encoded features. All plots and summaries below describe this sample.</p>
+        {% if algorithm == 'dbscan' and result.k == 0 %}<p>No dense clusters were found with these parameters. All sampled customers are shown as noise; increase EPS or reduce Minimum Samples to explore a different density.</p>{% endif %}
+    </div>
+    {% if result.dendro_plot %}<div class="section-card">
+        <h2>Hierarchical Clustering Dendrogram ({{ result.linkage_method.title() }} Linkage)</h2>
+        <p>The tree shows customer groups merging at increasing distances. The dashed line marks a reference cutoff for K = {{ result.k }}. The last 25 groups are shown; parenthesized leaf labels give their customer counts.{% if result.cutoff_tied %} Some merges have the same height, so this horizontal reference cannot uniquely represent the requested K.{% endif %}</p>
+        <img class="plot-img" src="{{ url_for('static', filename='plots/' + result.dendro_plot) }}" alt="Hierarchical dendrogram with dashed reference cutoff for K = {{ result.k }}">
+    </div>{% endif %}
+    <div class="section-card">
+        <h2>Customer Clusters in 2D PCA Space{{ ' (K = ' ~ result.k ~ ')' if algorithm == 'hierarchical' else '' }}</h2>
+        <img class="plot-img" src="{{ url_for('static', filename='plots/' + result.pca_plot) }}" alt="{{ 'Hierarchical customer clusters' if algorithm == 'hierarchical' else 'DBSCAN clusters and red cross noise points' }} in 2D PCA space">
+        <p>Colors identify clusters.{{ ' Red crosses identify noise / outliers.' if algorithm == 'dbscan' else '' }} The two components retain {{ '%.1f'|format(result.pca_variance|sum * 100) }}% of the feature variance. Clustering uses all features, so clusters may overlap in this projection.</p>
+    </div>
     {% include '_cluster_profiles.html' %}
+    {% if algorithm == 'dbscan' %}<div class="section-card"><h2>Cluster Separation</h2>
+        <p>Silhouette Score: <strong>{{ '%.4f'|format(result.silhouette) if result.silhouette is not none else 'Not defined' }}</strong>. Excludes noise and requires at least two non-noise clusters; uses up to 1,500 reproducibly selected assigned customers.</p>
+    </div>{% endif %}
     {% endif %}
 </main></div>
-<script src="{{ url_for('static', filename='ui.js') }}?v=1" defer></script>
+<script src="{{ url_for('static', filename='ui.js') }}?v=2" defer></script>
 </body></html>

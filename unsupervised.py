@@ -6,7 +6,7 @@ from sklearn.cluster import KMeans, AgglomerativeClustering, DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from scipy.cluster.hierarchy import linkage, dendrogram
-from preprocessing import preprocess_data
+from preprocessing import PolicyPreprocessor
 from load_data import load_data
 from project_runtime import cached_analysis
 from modeling import save_figure
@@ -16,10 +16,15 @@ SAMPLE_LIMITS = {"kmeans": 3500, "hierarchical": 1200, "dbscan": 2500}
 
 
 def get_clustering_data(sample_size=3500):
-    frame = preprocess_data().drop(columns="Response")
+    # Unsupervised preprocessing must not depend on Response or on the
+    # classification split (which is stratified using that label).
+    frame = load_data().drop(columns=["Response", "id"], errors="ignore")
     if len(frame) > sample_size:
         frame = frame.sample(n=sample_size, random_state=42)
-    frame = frame.loc[:, frame.nunique() > 1].astype(np.float32)
+    frame = PolicyPreprocessor().fit(frame).transform(frame)
+    frame = frame.loc[:, frame.nunique() > 1].astype(np.float64)
+    if not np.isfinite(frame.to_numpy()).all():
+        raise ValueError("Clustering inputs must contain only finite numbers.")
     if len(frame) < 3 or frame.shape[1] < 2:
         raise ValueError("Clustering needs at least three rows and two varying features.")
     return frame
@@ -44,7 +49,7 @@ def _safe_silhouette(X, labels):
     return float(silhouette_score(subset, assigned))
 
 
-def calculate_elbow(X):
+def calculate_elbow(X, filename="kmeans_elbow.png"):
     k_values = list(range(1, min(10, len(X) - 1, len(X.drop_duplicates())) + 1))
     if len(k_values) < 2:
         raise ValueError("Not enough distinct records for elbow analysis.")
@@ -55,15 +60,17 @@ def calculate_elbow(X):
     recommended = max(2, k_values[int(np.argmax(chord - normalized))])
     plt.figure(figsize=(9, 6))
     plt.plot(k_values, scores, marker="o")
+    plt.axvline(recommended, color="crimson", linestyle="--", label=f"Elbow recommendation K = {recommended}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("WCSS")
     plt.title("Elbow Method")
-    filename = "kmeans_elbow.png"
+    plt.grid(alpha=0.2)
+    plt.legend()
     save_figure(filename)
     return {"k_values": k_values, "scores": scores, "recommended_k": recommended, "plot": filename}
 
 
-def calculate_silhouette(X):
+def calculate_silhouette(X, filename="kmeans_silhouette.png"):
     k_values, scores = [], []
     for k in range(2, min(10, len(X) - 1, len(X.drop_duplicates())) + 1):
         model, clusters = run_kmeans(X, k)
@@ -76,10 +83,12 @@ def calculate_silhouette(X):
     best_index = int(np.argmax(scores))
     plt.figure(figsize=(9, 6))
     plt.plot(k_values, scores, marker="o")
+    plt.axvline(k_values[best_index], color="crimson", linestyle="--", label=f"Best silhouette K = {k_values[best_index]}")
     plt.xlabel("Number of Clusters (K)")
     plt.ylabel("Silhouette Score")
-    plt.title("Silhouette Score Method")
-    filename = "kmeans_silhouette.png"
+    plt.title("Silhouette Evaluation Curve")
+    plt.grid(alpha=0.2)
+    plt.legend()
     save_figure(filename)
     return {"k_values": k_values, "scores": scores, "recommended_k": k_values[best_index], "highest_score": scores[best_index], "plot": filename}
 
@@ -117,6 +126,16 @@ def create_cluster_plot(X, clusters, model, x_feature, y_feature, filename="kmea
     return filename
 
 
+def dendrogram_cutoff(merge_distances, k):
+    """Height between the last within-cluster and next between-cluster merge.
+
+    Equal merge heights cannot express every K with a horizontal cut. In
+    that case return the tied height as a reference, and disclose the tie.
+    """
+    lower, upper = float(merge_distances[-k]), float(merge_distances[-k + 1])
+    return (lower + upper) / 2, lower == upper
+
+
 @cached_analysis
 def run_clustering(algorithm="kmeans", method="silhouette", k=3, x_feature="Annual_Premium", y_feature="Vintage", linkage_method="ward", eps=0.8, min_samples=10):
     if algorithm not in SAMPLE_LIMITS:
@@ -126,15 +145,18 @@ def run_clustering(algorithm="kmeans", method="silhouette", k=3, x_feature="Annu
         raise ValueError("Choose available visualization features.")
     token = hashlib.sha256(repr((algorithm, method, k, x_feature, y_feature, linkage_method, eps, min_samples)).encode()).hexdigest()[:12]
     elbow, silhouette, dendro_plot = None, None, None
+    cutoff, cutoff_tied = None, False
     if algorithm == "kmeans":
+        if method not in {"manual", "elbow", "silhouette"}:
+            raise ValueError("Invalid K selection method.")
+        # Evaluate the same all-feature sample for both recommendations.
+        # Per-run filenames keep charts for different configurations independent.
+        elbow = calculate_elbow(X, f"kmeans_elbow_{token}.png")
+        silhouette = calculate_silhouette(X, f"kmeans_silhouette_{token}.png")
         if method == "elbow":
-            elbow = calculate_elbow(X)
             k = elbow["recommended_k"]
         elif method == "silhouette":
-            silhouette = calculate_silhouette(X)
             k = silhouette["recommended_k"]
-        elif method != "manual":
-            raise ValueError("Invalid K selection method.")
         model, labels = run_kmeans(X, k)
     elif algorithm == "hierarchical":
         _validate_k(X, k)
@@ -142,10 +164,15 @@ def run_clustering(algorithm="kmeans", method="silhouette", k=3, x_feature="Annu
             raise ValueError("Choose ward, complete, or average linkage.")
         model = AgglomerativeClustering(n_clusters=k, linkage=linkage_method)
         labels = model.fit_predict(X)
-        plt.figure(figsize=(10, 5))
-        dendrogram(linkage(X, method=linkage_method), truncate_mode="lastp", p=25, leaf_rotation=90)
+        merges = linkage(X, method=linkage_method)
+        cutoff, cutoff_tied = dendrogram_cutoff(merges[:, 2], k)
+        plt.figure(figsize=(12, 6))
+        dendrogram(merges, truncate_mode="lastp", p=25, leaf_rotation=90, color_threshold=cutoff)
+        plt.axhline(cutoff, color="crimson", linestyle="--", label=f"Reference cutoff (K = {k})")
         plt.title(f"Hierarchical Clustering — {linkage_method.title()} Linkage")
         plt.ylabel("Euclidean Distance")
+        plt.xlabel("Customer grouping / sample index (counts in parentheses)")
+        plt.legend()
         dendro_plot = f"hierarchical_dendrogram_{token}.png"
         save_figure(dendro_plot)
     else:
@@ -160,10 +187,26 @@ def run_clustering(algorithm="kmeans", method="silhouette", k=3, x_feature="Annu
     pca = PCA(n_components=2, random_state=42)
     projected = pca.fit_transform(X)
     plt.figure(figsize=(9, 6))
-    plt.scatter(projected[:, 0], projected[:, 1], c=labels, s=12, alpha=0.5, cmap="tab10")
+    palette = plt.get_cmap("tab10")
+    for label in sorted(set(labels)):
+        mask = labels == label
+        if label == -1:
+            plt.scatter(projected[mask, 0], projected[mask, 1], s=24, marker="x", color="#e34e54",
+                        alpha=0.65, label=f"Noise / Outliers ({int(mask.sum()):,})")
+        else:
+            plt.scatter(projected[mask, 0], projected[mask, 1], s=14, alpha=0.6,
+                        color=palette(int(label) % 10), label=f"Cluster {label} ({int(mask.sum()):,})")
+    if hasattr(model, "cluster_centers_"):
+        centers = pca.transform(pd.DataFrame(model.cluster_centers_, columns=X.columns))
+        plt.scatter(centers[:, 0], centers[:, 1], marker="X", s=140, color="black", edgecolor="white", label="Cluster centers")
     plt.xlabel(f"Principal Component 1 ({pca.explained_variance_ratio_[0]:.1%} variance)")
     plt.ylabel(f"Principal Component 2 ({pca.explained_variance_ratio_[1]:.1%} variance)")
-    plt.title(f"{algorithm.title()} — PCA Visualization (noise label = -1)")
+    title = {"kmeans": f"K-Means Customer Clusters (K = {k})",
+             "hierarchical": f"Hierarchical Customer Clusters ({linkage_method.title()}, K = {k})",
+             "dbscan": f"DBSCAN Customer Clusters (eps = {eps:g}, min samples = {min_samples})"}[algorithm]
+    plt.title(title)
+    plt.grid(alpha=0.2)
+    plt.legend(fontsize=8, loc="best", ncols=2 if len(set(labels)) > 6 else 1)
     pca_plot = f"{algorithm}_pca_{token}.png"
     save_figure(pca_plot)
     raw = load_data().loc[X.index].copy()
@@ -171,19 +214,33 @@ def run_clustering(algorithm="kmeans", method="silhouette", k=3, x_feature="Annu
     profiles = []
     for label, group in raw.groupby("Cluster", sort=True):
         profiles.append({"cluster": int(label), "count": len(group), "mean_age": float(group.Age.mean()),
-                         "mean_premium": float(group.Annual_Premium.mean()), "response_rate": float(group.Response.mean() * 100)})
+                         "population_percentage": float(len(group) / len(raw) * 100),
+                         "mean_premium": float(group.Annual_Premium.mean()),
+                         "mean_vintage": float(group.Vintage.mean()),
+                         "previously_insured_rate": float(group.Previously_Insured.mean() * 100),
+                         "vehicle_damage_rate": float(group.Vehicle_Damage.eq("Yes").mean() * 100),
+                         "response_rate": float(group.Response.mean() * 100)})
     score = _safe_silhouette(X, labels)
     assigned = labels != -1
     extra_metrics = {}
     if 2 <= len(set(labels[assigned])) < int(assigned.sum()):
         extra_metrics = {"davies_bouldin": float(davies_bouldin_score(X.loc[assigned], labels[assigned])),
                          "calinski_harabasz": float(calinski_harabasz_score(X.loc[assigned], labels[assigned]))}
-    return {"rows": len(X), "total_rows": len(preprocess_data()), "features": X.shape[1], "k": k,
+    return {"rows": len(X), "total_rows": len(load_data()), "features": X.shape[1], "k": k,
+            "model": model, "labels": labels, "sample_indices": X.index.tolist(), "feature_names": X.columns.tolist(),
             "algorithm": algorithm, "method": method.title() if algorithm == "kmeans" else linkage_method.title() if algorithm == "hierarchical" else "Density",
             "wcss": float(model.inertia_) if hasattr(model, "inertia_") else None,
             "silhouette": score, "distribution": get_cluster_distribution(labels),
             "noise": int((labels == -1).sum()), "profiles": profiles, "cluster_plot": cluster_plot,
+            "noise_percentage": float(np.mean(labels == -1) * 100),
+            "eps": eps if algorithm == "dbscan" else None,
+            "min_samples": min_samples if algorithm == "dbscan" else None,
+            "linkage_method": linkage_method if algorithm == "hierarchical" else None,
+            "reference_cutoff": cutoff, "cutoff_tied": cutoff_tied,
+            "pca_variance": pca.explained_variance_ratio_.tolist(),
             "pca_plot": pca_plot, "dendro_plot": dendro_plot,
             "elbow_plot": elbow["plot"] if elbow else None, "silhouette_plot": silhouette["plot"] if silhouette else None,
-            "recommended_k": silhouette["recommended_k"] if silhouette else elbow["recommended_k"] if elbow else None,
+            "elbow_analysis": elbow, "silhouette_analysis": silhouette,
+            "recommended_k": (elbow["recommended_k"] if method == "elbow" else silhouette["recommended_k"] if method == "silhouette" else None) if algorithm == "kmeans" else None,
+            "best_silhouette_k": silhouette["recommended_k"] if silhouette else None,
             "highest_silhouette": silhouette["highest_score"] if silhouette else None, **extra_metrics}
